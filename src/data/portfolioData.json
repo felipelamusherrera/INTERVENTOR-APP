@@ -1,0 +1,2268 @@
+{
+  "ejecucion": [
+    {
+      "id": "BUC-001",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "COUNTRY PARK TORRE 2",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "2"
+    },
+    {
+      "id": "BUC-002",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "COUNTRY PARK TORRE 3",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "3"
+    },
+    {
+      "id": "BUC-003",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "COUNTRY WOODS",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-004",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "CERROS DE SANTA MARIA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-005",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "RESERVA DE ALCALA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-006",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "NOVUS",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-007",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "NATIVA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-008",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "MERIDIANO",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-009",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "CITY CENTER",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-010",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "LIVING",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-011",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "MASAI",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-012",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "PANORAMIK",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-013",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "SKY TOWER",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-014",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "MONTEVISTA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-015",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "RIVERA DEL HATO",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-016",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "AZAFRAN",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-017",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "SOLEY",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-018",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "AURORA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-019",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "BOSQUES DEL HATO",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-020",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "PRADERA DEL HATO",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-021",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "TERRAZA DE MIRAFLORES",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-022",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "VERDANIA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-023",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "SCALA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-024",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "MONTPELLIER",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-025",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "BURDEOS",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-026",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "CHAMONIX",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-027",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "REGENCY",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-028",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA ANGIE SIERRA",
+      "proyecto": "CITIZEN",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-029",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA ANGIE SIERRA",
+      "proyecto": "PEÑON DE ALICANTE",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-030",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "VERDANIA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-031",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "SCALA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-032",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "MONTPELLIER",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-033",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "BURDEOS",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-034",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "CHAMONIX",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-035",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "REGENCY",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-036",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA ANGIE SIERRA",
+      "proyecto": "CITIZEN",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-037",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA ANGIE SIERRA",
+      "proyecto": "PEÑON DE ALICANTE",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAR-038",
+      "sucursal": "CARTAGENA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "VERDANIA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAR-039",
+      "sucursal": "CARTAGENA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "SCALA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-040",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BAIKAL",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-041",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BELATERRA TEMPUS",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-042",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BELATERRA PIETRA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-043",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BELATERRA SANTA CLARA",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-044",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BELATERRA VIVERDI",
+      "tab": "P-EJECUCION",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 82.5,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    }
+  ],
+  "entregados": [
+    {
+      "id": "BUC-001",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "COUNTRY PARK",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-002",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "COUNTRY WOODS",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-003",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "CERROS DE SANTA MARIA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-004",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "RESERVA DE ALCALA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-005",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "NOVUS",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-006",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "NATIVA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-007",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "MERIDIANO",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-008",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "CITY CENTER",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-009",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "LIVING",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-010",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA NATHALIA ALVAREZ",
+      "proyecto": "MASAI",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-011",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "PANORAMIK",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-012",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "SKY TOWER",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-013",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "MONTEVISTA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-014",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "RIVERA DEL HATO",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-015",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "AZAFRAN",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-016",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "SOLEY",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-017",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "AURORA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-018",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "BOSQUES DEL HATO",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-019",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "PRADERA DEL HATO",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BUC-020",
+      "sucursal": "BUCARAMANGA",
+      "gerencia": "GERENCIA CLAUDIA CRUZ",
+      "proyecto": "TERRAZA DE MIRAFLORES",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-021",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "VERDANIA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-022",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "SCALA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-023",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "MONTPELLIER",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-024",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "BURDEOS",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-025",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "CHAMONIX",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-026",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "REGENCY",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-027",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA ANGIE SIERRA",
+      "proyecto": "CITIZEN",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BOG-028",
+      "sucursal": "BOGOTA",
+      "gerencia": "GERENCIA ANGIE SIERRA",
+      "proyecto": "PEÑON DE ALICANTE",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-029",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "VERDANIA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-030",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "SCALA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-031",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "MONTPELLIER",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-032",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "BURDEOS",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-033",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "CHAMONIX",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-034",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA PEDRO MORA",
+      "proyecto": "REGENCY",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-035",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA ANGIE SIERRA",
+      "proyecto": "CITIZEN",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "BAR-036",
+      "sucursal": "BARRANQUILLA",
+      "gerencia": "GERENCIA ANGIE SIERRA",
+      "proyecto": "PEÑON DE ALICANTE",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAR-037",
+      "sucursal": "CARTAGENA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "VERDANIA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAR-038",
+      "sucursal": "CARTAGENA",
+      "gerencia": "GERENCIA RONALD FORERO",
+      "proyecto": "SCALA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-039",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BAIKAL",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-040",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BELATERRA TEMPUS",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-041",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BELATERRA PIETRA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-042",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BELATERRA SANTA CLARA",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    },
+    {
+      "id": "CAL-043",
+      "sucursal": "CALI",
+      "gerencia": "GERENCIA JHAIR VARGAS",
+      "proyecto": "BELATERRA VIVERDI",
+      "tab": "P-ENTREGADOS",
+      "fechaPrometida": "2026-11-30",
+      "fechaConfirmada": "2026-12-15",
+      "cumplimiento": 0,
+      "compuertas": {
+        "m12": 0,
+        "m6": 0,
+        "m3": 0
+      },
+      "costos": {
+        "totales": 1.0,
+        "viv": 1.0,
+        "urb": 1.0,
+        "adminis": 1.0
+      },
+      "selloCalidad": 85.0,
+      "productividad": 82.0,
+      "ctoCumplimiento": 100.0,
+      "estado": "Al día",
+      "proximaTorre": "Torre 1"
+    }
+  ]
+}
