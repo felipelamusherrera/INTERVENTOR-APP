@@ -136,3 +136,4 @@ A partir de este flujo consolidado se alimentan directamente los módulos de rep
    Calcula en tiempo real los semáforos de compuertas a **12M, 6M y 3M** antes de la fecha prometida de entrega para la Alta Gerencia (Dr. Sergio).
 3. **Consolidado Mensual BSC:**  
    Exporta las métricas unificadas para el informe mensual corporativo de interventoría.
+
