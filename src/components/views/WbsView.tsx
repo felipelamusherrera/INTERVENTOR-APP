@@ -10,19 +10,21 @@ import {
   User, 
   FileSpreadsheet,
   Layers,
-  ArrowUpDown
+  ArrowUpDown,
+  Database
 } from 'lucide-react';
 import { WbsItem } from '../../types';
 import { wbsBelaterraData } from '../../data/mockData';
-import { parseScheduleCsv } from '../../services/wbsParser';
+import { parseScheduleCsv, parseScheduleExcel } from '../../services/wbsParser';
+import wbsBelaterraFullData from '../../data/wbsBelaterraFull.json';
 
 export const WbsView: React.FC = () => {
-  const [tasks, setTasks] = useState<WbsItem[]>(wbsBelaterraData);
+  const [tasks, setTasks] = useState<WbsItem[]>(wbsBelaterraFullData as WbsItem[]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedResp, setSelectedResp] = useState('TODOS');
   const [filterOnlyDelays, setFilterOnlyDelays] = useState(false);
   const [filterMilestonesOnly, setFilterMilestonesOnly] = useState(false);
-  const [fileName, setFileName] = useState('Plantilla Programacion Obra Belaterra.csv (Activo)');
+  const [fileName, setFileName] = useState('PI_WORKPLANNER_OCT26.xlsx (2,980 tareas activas)');
 
   const uniqueResponsables = Array.from(new Set(tasks.map(t => t.responsable).filter(Boolean)));
 
@@ -32,16 +34,40 @@ export const WbsView: React.FC = () => {
 
     setFileName(file.name);
     const reader = new FileReader();
-    reader.onload = (event) => {
-      const content = event.target?.result as string;
-      if (content) {
-        const parsed = parseScheduleCsv(content);
-        if (parsed.tasks.length > 0) {
-          setTasks(parsed.tasks);
+
+    if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+      reader.onload = (event) => {
+        const arrayBuffer = event.target?.result as ArrayBuffer;
+        if (arrayBuffer) {
+          const parsed = parseScheduleExcel(arrayBuffer);
+          if (parsed.tasks.length > 0) {
+            setTasks(parsed.tasks);
+          }
         }
-      }
-    };
-    reader.readAsText(file);
+      };
+      reader.readAsArrayBuffer(file);
+    } else {
+      reader.onload = (event) => {
+        const content = event.target?.result as string;
+        if (content) {
+          const parsed = parseScheduleCsv(content);
+          if (parsed.tasks.length > 0) {
+            setTasks(parsed.tasks);
+          }
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+  const loadSampleDataset = (type: 'full' | 'summary') => {
+    if (type === 'full') {
+      setTasks(wbsBelaterraFullData as WbsItem[]);
+      setFileName('PI_WORKPLANNER_OCT26.xlsx (2,980 tareas activas)');
+    } else {
+      setTasks(wbsBelaterraData);
+      setFileName('Plantilla Resumida Belaterra (125 hitos/capítulos)');
+    }
   };
 
   const filteredTasks = tasks.filter(t => {
@@ -73,14 +99,37 @@ export const WbsView: React.FC = () => {
           </p>
         </div>
 
-        {/* Upload File Input */}
-        <div className="flex items-center space-x-2">
+        {/* Upload & Dataset selector */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+            <button
+              onClick={() => loadSampleDataset('full')}
+              className={`px-2.5 py-1 text-xs rounded-md font-medium transition ${
+                fileName.includes('PI_WORKPLANNER')
+                  ? 'bg-white text-blue-700 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              PI_WORKPLANNER (2,980)
+            </button>
+            <button
+              onClick={() => loadSampleDataset('summary')}
+              className={`px-2.5 py-1 text-xs rounded-md font-medium transition ${
+                !fileName.includes('PI_WORKPLANNER')
+                  ? 'bg-white text-blue-700 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              Resumido (125)
+            </button>
+          </div>
+
           <label className="flex items-center space-x-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-2 rounded-lg cursor-pointer shadow transition">
             <Upload className="w-4 h-4" />
-            <span>Cargar Cronograma CSV</span>
+            <span>Cargar Excel / CSV</span>
             <input 
               type="file" 
-              accept=".csv" 
+              accept=".xlsx,.xls,.csv" 
               onChange={handleFileUpload} 
               className="hidden" 
             />
