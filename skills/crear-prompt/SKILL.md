@@ -32,3 +32,4 @@ relleno y promesas de resultados perfectos.
 Entrega el prompt en un bloque fácil de copiar y señala
 solo los campos que falten. No ejecutes la tarea salvo que
 el usuario lo pida.
+

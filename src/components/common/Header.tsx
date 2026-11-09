@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Building2, 
   Calendar, 
@@ -11,9 +11,18 @@ import {
   ListTree, 
   CheckSquare, 
   AlertTriangle,
-  Award
+  Award,
+  GitBranch,
+  Coins,
+  Users,
+  UserCheck,
+  User,
+  ChevronDown
 } from 'lucide-react';
 import { Sucursal } from '../../types';
+import { AuthService } from '../../services/authService';
+import { Usuario, ROL_LABEL } from '../../types/auth';
+import { puedeAccederModulo } from '../../lib/permisos-roles';
 
 interface HeaderProps {
   activeTab: string;
@@ -39,19 +48,57 @@ export const Header: React.FC<HeaderProps> = ({
   cutoffDate,
 }) => {
   const sucursales: Sucursal[] = ['TODAS', 'BUCARAMANGA', 'BOGOTA', 'CALI', 'BARRANQUILLA', 'CARTAGENA'];
+  
+  const [currentUser, setCurrentUser] = useState<Usuario>(AuthService.getCurrentUser());
+  const [usuariosList, setUsuariosList] = useState<Usuario[]>(AuthService.getUsuarios());
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
 
-  const navItems = [
-    { id: 'resumen', label: '00. Vista Cero', icon: Building2, badge: 'Gerencial' },
-    { id: 'tiempo', label: '02. Tiempo & Hitos', icon: Clock, badge: 'I / E' },
-    { id: 'wbs', label: '03. WBS Ingesta', icon: ListTree },
-    { id: 'bitacora', label: '04. Bitácora Móvil', icon: CheckSquare, badge: '5 Causas' },
-    { id: 'lookahead', label: '05. Lookahead', icon: AlertTriangle, badge: '7 Compuertas' },
-    { id: 'productividad', label: '06. Productividad', icon: TrendingUp, badge: 'Tesla' },
-    { id: 'elevacion', label: '07. Elevación 3D/Pisos', icon: Layers },
-    { id: 'calidad', label: '08. Calidad & Sellos', icon: Award, badge: 'Gris / Blanca' },
-    { id: 'cto', label: '09. CTO Proyectos', icon: ShieldCheck, badge: 'Ley 1796' },
-    { id: 'reporte', label: '01. Ficha Aconex', icon: FileText, badge: 'PDF' },
+  useEffect(() => {
+    const handleAuthChange = () => {
+      setCurrentUser(AuthService.getCurrentUser());
+      setUsuariosList(AuthService.getUsuarios());
+    };
+    window.addEventListener('auth_state_changed', handleAuthChange);
+    return () => window.removeEventListener('auth_state_changed', handleAuthChange);
+  }, []);
+
+  const allNavItems = [
+    // Operación Campo (Residentes)
+    { id: 'residente-programacion', label: 'Prog. Obra & CPM', icon: GitBranch, badge: 'CPM Vivo', group: 'campo' },
+    { id: 'residente-presupuesto', label: 'Presupuesto Opus', icon: Coins, badge: 'Costos', group: 'campo' },
+    { id: 'residente-calidad', label: 'Sellos Campo', icon: Award, badge: '0/X/R', group: 'campo' },
+    { id: 'residente-cto', label: 'Compromisos CTO', icon: ShieldCheck, badge: 'Actas', group: 'campo' },
+    { id: 'residente-productividad', label: 'Censo Cuadrillas', icon: Users, badge: 'Diario', group: 'campo' },
+
+    // Control y Programación
+    { id: 'wbs', label: 'WBS / EDT', icon: ListTree, group: 'control' },
+    { id: 'tiempo', label: 'Tiempo & Hitos', icon: Clock, badge: 'I / E', group: 'control' },
+    { id: 'lookahead', label: 'Lookahead', icon: AlertTriangle, badge: '4 Sem', group: 'control' },
+    { id: 'elevacion', label: 'Elevación 3D', icon: Layers, group: 'control' },
+
+    // Gestión Gerencial
+    { id: 'resumen', label: 'Vista Cero Gerencial', icon: Building2, badge: 'Portafolio', group: 'gerencial' },
+    { id: 'calidad', label: 'Tablero Calidad', icon: Award, group: 'gerencial' },
+    { id: 'cto', label: 'Auditoría CTO', icon: ShieldCheck, group: 'gerencial' },
+    { id: 'productividad', label: 'Matriz Productividad', icon: TrendingUp, badge: 'Tesla', group: 'gerencial' },
+    { id: 'bitacora', label: 'Bitácora & Riesgos', icon: CheckSquare, group: 'gerencial' },
+    { id: 'reporte', label: 'Ficha Aconex PDF', icon: FileText, badge: 'PDF', group: 'gerencial' },
+
+    // Administración
+    { id: 'usuarios', label: 'Gobernanza Usuarios', icon: UserCheck, badge: 'Admin', group: 'admin' },
   ];
+
+  // Filtrar según los permisos del rol actual
+  const visibleNavItems = allNavItems.filter(item => 
+    puedeAccederModulo(currentUser.rol, item.id)
+  );
+
+  const pendientesCount = usuariosList.filter(u => u.estado === 'PENDIENTE').length;
+
+  const handleSelectUser = (u: Usuario) => {
+    AuthService.setCurrentUser(u);
+    setShowUserDropdown(false);
+  };
 
   return (
     <header className="bg-white border-b border-surface-border sticky top-0 z-30 shadow-sm no-print">
@@ -69,18 +116,18 @@ export const Header: React.FC<HeaderProps> = ({
                   INTERVENTORÍA Y CONTROL
                 </span>
                 <span className="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-medium">
-                  v2.4 Tesla
+                  v3.0 Multi-Rol
                 </span>
               </div>
               <p className="text-xs text-slate-500 font-medium">
-                Plataforma Integral de Supervisión Técnica y Control de Proyectos
+                Supervisión Técnica de Campo & Tableros Gerenciales
               </p>
             </div>
           </div>
 
-          {/* Context Selectors */}
+          {/* Context Selectors & User Profile */}
           <div className="flex items-center space-x-3 text-xs">
-            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 space-x-1.5">
+            <div className="hidden lg:flex items-center bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 space-x-1.5">
               <Calendar className="w-3.5 h-3.5 text-slate-500" />
               <span className="text-slate-500 font-medium">Fecha de Corte:</span>
               <span className="font-semibold text-slate-800 tabular-nums">{cutoffDate}</span>
@@ -118,7 +165,7 @@ export const Header: React.FC<HeaderProps> = ({
               </select>
             </div>
 
-            <div className="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 space-x-1.5">
+            <div className="hidden sm:flex items-center bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 space-x-1.5">
               <Layers className="w-3.5 h-3.5 text-amber-600" />
               <span className="text-slate-500 font-medium">Torre:</span>
               <select
@@ -133,27 +180,95 @@ export const Header: React.FC<HeaderProps> = ({
                 <option value="Urbanismo">Urbanismo</option>
               </select>
             </div>
+
+            {/* Profile Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+                className="flex items-center gap-2 bg-blue-50 border border-blue-200 hover:border-blue-300 rounded-xl px-3 py-1.5 transition-all text-left"
+              >
+                <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-[11px]">
+                  {currentUser.nombre.charAt(0)}
+                </div>
+                <div className="hidden md:block">
+                  <div className="text-[11px] font-bold text-slate-900 leading-tight truncate max-w-[120px]">
+                    {currentUser.nombre}
+                  </div>
+                  <div className="text-[10px] text-blue-700 font-semibold leading-none mt-0.5">
+                    {ROL_LABEL[currentUser.rol]}
+                  </div>
+                </div>
+                <ChevronDown className="w-3 h-3 text-slate-500 ml-0.5" />
+              </button>
+
+              {/* User Switcher Menu */}
+              {showUserDropdown && (
+                <div className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 z-50 space-y-1">
+                  <div className="px-3 py-2 border-b border-slate-100">
+                    <span className="text-[10px] uppercase font-bold text-slate-400">Cambiar Rol / Usuario</span>
+                    <div className="text-xs font-bold text-slate-800 mt-0.5">{currentUser.nombre}</div>
+                    <div className="text-[11px] text-slate-500">{currentUser.correo}</div>
+                  </div>
+
+                  <div className="max-h-60 overflow-y-auto space-y-0.5 py-1">
+                    {usuariosList.filter(u => u.estado === 'ACTIVO').map(u => (
+                      <button
+                        key={u.id}
+                        onClick={() => handleSelectUser(u)}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-all ${
+                          u.id === currentUser.id 
+                            ? 'bg-blue-50 text-blue-900 font-bold' 
+                            : 'hover:bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        <div>
+                          <div className="font-semibold">{u.nombre}</div>
+                          <div className="text-[10px] text-slate-400">{ROL_LABEL[u.rol]} • {u.sucursal}</div>
+                        </div>
+                        {u.id === currentUser.id && <span className="text-blue-600 font-bold">✓</span>}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-slate-100 pt-1">
+                    <button
+                      onClick={() => {
+                        setActiveTab('usuarios');
+                        setShowUserDropdown(false);
+                      }}
+                      className="w-full text-center py-2 text-xs font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                    >
+                      Ir a Gobernanza de Usuarios
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
         {/* Level 2: Tab Navigation */}
         <nav className="flex space-x-1 overflow-x-auto py-2 scrollbar-none">
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-all duration-150 ${
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all duration-150 ${
                   isActive
-                    ? 'bg-blue-600 text-white shadow-sm font-semibold'
+                    ? 'bg-blue-600 text-white shadow-sm font-bold'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
                 <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-500'}`} />
                 <span>{item.label}</span>
-                {item.badge && (
+                {item.id === 'usuarios' && pendientesCount > 0 ? (
+                  <span className="ml-1 px-1.5 py-0.2 text-[10px] rounded-full font-bold bg-amber-500 text-white animate-pulse">
+                    {pendientesCount}
+                  </span>
+                ) : item.badge ? (
                   <span
                     className={`ml-1 px-1.5 py-0.2 text-[10px] rounded-full font-bold ${
                       isActive
@@ -163,7 +278,7 @@ export const Header: React.FC<HeaderProps> = ({
                   >
                     {item.badge}
                   </span>
-                )}
+                ) : null}
               </button>
             );
           })}

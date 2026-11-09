@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from './components/common/Header';
 import { ResumenView } from './components/views/ResumenView';
 import { TiempoView } from './components/views/TiempoView';
@@ -10,14 +10,45 @@ import { ElevacionView } from './components/views/ElevacionView';
 import { CalidadView } from './components/views/CalidadView';
 import { CtoView } from './components/views/CtoView';
 import { ReportePdfView } from './components/views/ReportePdfView';
+import { UsuariosView } from './components/views/UsuariosView';
+
+// Submódulos de Operación en Campo (Residentes)
+import { ResidenteProgramacionView } from './components/views/residente/ResidenteProgramacionView';
+import { ResidentePresupuestoView } from './components/views/residente/ResidentePresupuestoView';
+import { ResidenteCalidadView } from './components/views/residente/ResidenteCalidadView';
+import { ResidenteCtoView } from './components/views/residente/ResidenteCtoView';
+import { ResidenteProductividadView } from './components/views/residente/ResidenteProductividadView';
+
 import { Sucursal } from './types';
+import { AuthService } from './services/authService';
+import { puedeAccederModulo } from './lib/permisos-roles';
 
 export const App: React.FC = () => {
+  const [currentUser, setCurrentUser] = useState(AuthService.getCurrentUser());
   const [activeTab, setActiveTab] = useState<string>('resumen');
   const [selectedSucursal, setSelectedSucursal] = useState<Sucursal>('CALI');
   const [selectedProject, setSelectedProject] = useState<string>('Belaterra Pietra');
   const [selectedTower, setSelectedTower] = useState<string>('Torre 1');
   const [cutoffDate] = useState<string>('2026-11-03');
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const user = AuthService.getCurrentUser();
+      setCurrentUser(user);
+      // Si el tab actual no está permitido para el nuevo rol, redirigir al primer tab permitido
+      if (!puedeAccederModulo(user.rol, activeTab)) {
+        if (user.rol === 'RESIDENTE_INTERVENTORIA') {
+          setActiveTab('residente-programacion');
+        } else if (user.rol === 'DIRECTIVO') {
+          setActiveTab('resumen');
+        } else {
+          setActiveTab('resumen');
+        }
+      }
+    };
+    window.addEventListener('auth_state_changed', handleAuthChange);
+    return () => window.removeEventListener('auth_state_changed', handleAuthChange);
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-surface-canvas flex flex-col font-sans">
@@ -36,12 +67,30 @@ export const App: React.FC = () => {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {activeTab === 'resumen' && (
-          <ResumenView
-            selectedSucursal={selectedSucursal}
-            onNavigateTab={setActiveTab}
-            onSelectProject={setSelectedProject}
-          />
+        {/* Submódulos de Operación Campo para Residentes */}
+        {activeTab === 'residente-programacion' && (
+          <ResidenteProgramacionView />
+        )}
+
+        {activeTab === 'residente-presupuesto' && (
+          <ResidentePresupuestoView />
+        )}
+
+        {activeTab === 'residente-calidad' && (
+          <ResidenteCalidadView />
+        )}
+
+        {activeTab === 'residente-cto' && (
+          <ResidenteCtoView />
+        )}
+
+        {activeTab === 'residente-productividad' && (
+          <ResidenteProductividadView />
+        )}
+
+        {/* Módulos de Control y Programación */}
+        {activeTab === 'wbs' && (
+          <WbsView />
         )}
 
         {activeTab === 'tiempo' && (
@@ -51,24 +100,21 @@ export const App: React.FC = () => {
           />
         )}
 
-        {activeTab === 'wbs' && (
-          <WbsView />
-        )}
-
-        {activeTab === 'bitacora' && (
-          <BitacoraView />
-        )}
-
         {activeTab === 'lookahead' && (
           <LookaheadView />
         )}
 
-        {activeTab === 'productividad' && (
-          <ProductividadView />
-        )}
-
         {activeTab === 'elevacion' && (
           <ElevacionView />
+        )}
+
+        {/* Módulos de Gestión Gerencial */}
+        {activeTab === 'resumen' && (
+          <ResumenView
+            selectedSucursal={selectedSucursal}
+            onNavigateTab={setActiveTab}
+            onSelectProject={setSelectedProject}
+          />
         )}
 
         {activeTab === 'calidad' && (
@@ -79,6 +125,14 @@ export const App: React.FC = () => {
           <CtoView />
         )}
 
+        {activeTab === 'productividad' && (
+          <ProductividadView />
+        )}
+
+        {activeTab === 'bitacora' && (
+          <BitacoraView />
+        )}
+
         {activeTab === 'reporte' && (
           <ReportePdfView
             selectedProject={selectedProject}
@@ -86,6 +140,11 @@ export const App: React.FC = () => {
             selectedSucursal={selectedSucursal}
             cutoffDate={cutoffDate}
           />
+        )}
+
+        {/* Módulo de Administración y Gobernanza */}
+        {activeTab === 'usuarios' && (
+          <UsuariosView />
         )}
       </main>
 
@@ -98,13 +157,11 @@ export const App: React.FC = () => {
             <span>Sistema Integral de Interventoría y Control de Proyectos</span>
           </div>
           <div className="flex items-center space-x-3 text-[11px] text-slate-400">
-            <span>Metodología 12 Macro-Hitos</span>
+            <span>Sesión: {currentUser.nombre}</span>
             <span>·</span>
-            <span>Sellos MA-SIG-CAL-001</span>
+            <span>Microsoft Fabric Ready</span>
             <span>·</span>
-            <span>CTO Ley 1796</span>
-            <span>·</span>
-            <span>Aconex Ready</span>
+            <span>Ambiente: Producción v3.0</span>
           </div>
         </div>
       </footer>
