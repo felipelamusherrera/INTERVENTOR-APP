@@ -10,14 +10,15 @@ import {
   TrendingUp, 
   ListTree, 
   CheckSquare, 
-  AlertTriangle,
-  Award,
-  GitBranch,
-  Coins,
-  Users,
-  UserCheck,
-  User,
-  ChevronDown
+  AlertTriangle, 
+  Award, 
+  GitBranch, 
+  Coins, 
+  Users, 
+  UserCheck, 
+  User, 
+  ChevronDown,
+  BarChart3
 } from 'lucide-react';
 import { Sucursal } from '../../types';
 import { AuthService } from '../../services/authService';
@@ -73,6 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
     // Control y Programación
     { id: 'wbs', label: 'WBS / EDT', icon: ListTree, group: 'control' },
     { id: 'tiempo', label: 'Tiempo & Hitos', icon: Clock, badge: 'I / E', group: 'control' },
+    { id: 'gantt-gerencial', label: 'Gantt Gerencial', icon: BarChart3, badge: 'EDT 6/5', group: 'control' },
     { id: 'lookahead', label: 'Lookahead', icon: AlertTriangle, badge: '4 Sem', group: 'control' },
     { id: 'elevacion', label: 'Elevación 3D', icon: Layers, group: 'control' },
 

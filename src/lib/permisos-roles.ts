@@ -59,6 +59,14 @@ export const MODULOS_SISTEMA: ModuloSistema[] = [
     icono: 'Clock',
   },
   {
+    id: 'gantt-gerencial',
+    label: 'Gantt Gerencial',
+    seccion: 'Control & Programación',
+    descripcion: 'Diagrama de Gantt ejecutivo (Nivel 6 Torre / Nivel 5 Otras) con árbol colapsable y CPM.',
+    icono: 'BarChart3',
+    badge: 'EDT 6/5',
+  },
+  {
     id: 'lookahead',
     label: 'Lookahead 4 Sem.',
     seccion: 'Control & Programación',
@@ -138,13 +146,16 @@ export const PERMISOS_DEFAULT: MatrizPermisos = {
     'residente-productividad',
     'wbs',
     'tiempo',
+    'gantt-gerencial',
     'lookahead',
-    'elevacion'
+    'elevacion',
+    'bitacora'
   ],
   DIRECTOR_OBRA: [
     'residente-programacion',
     'wbs',
     'tiempo',
+    'gantt-gerencial',
     'lookahead',
     'elevacion',
     'resumen',
@@ -161,6 +172,7 @@ export const PERMISOS_DEFAULT: MatrizPermisos = {
     'residente-productividad',
     'wbs',
     'tiempo',
+    'gantt-gerencial',
     'lookahead',
     'elevacion',
     'resumen',
@@ -179,6 +191,7 @@ export const PERMISOS_DEFAULT: MatrizPermisos = {
     'residente-productividad',
     'wbs',
     'tiempo',
+    'gantt-gerencial',
     'lookahead',
     'elevacion',
     'resumen',
@@ -192,9 +205,11 @@ export const PERMISOS_DEFAULT: MatrizPermisos = {
   DIRECTIVO: [
     'resumen',
     'tiempo',
+    'gantt-gerencial',
     'calidad',
     'cto',
     'productividad',
+    'bitacora',
     'reportes'
   ],
   ADMINISTRADOR: [
@@ -205,6 +220,7 @@ export const PERMISOS_DEFAULT: MatrizPermisos = {
     'residente-productividad',
     'wbs',
     'tiempo',
+    'gantt-gerencial',
     'lookahead',
     'elevacion',
     'resumen',

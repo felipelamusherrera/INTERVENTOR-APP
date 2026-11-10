@@ -10,9 +10,12 @@ import {
   CloudUpload,
   Check,
   RefreshCw,
+  Lock,
+  Unlock,
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { CpmEngine, CpmTask, CpmProjectSummary } from '../../../services/cpmEngine';
+import { BaselineService } from '../../../services/baselineService';
 import initialWbsData from '../../../data/wbsBelaterraFull.json';
 
 export const ResidenteProgramacionView: React.FC = () => {
@@ -23,6 +26,25 @@ export const ResidenteProgramacionView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTask, setSelectedTask] = useState<CpmTask | null>(null);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced'>('idle');
+  const [tieneLB, setTieneLB] = useState(false);
+
+  const verificarLB = () => {
+    setTieneLB(BaselineService.tieneLineaBase('Belaterra Pietra'));
+  };
+
+  useEffect(() => {
+    verificarLB();
+    const handleLB = () => verificarLB();
+    window.addEventListener('marval_baseline_updated', handleLB);
+    return () => window.removeEventListener('marval_baseline_updated', handleLB);
+  }, []);
+
+  const handleCongelarLB = () => {
+    if (!tasks.length) return;
+    BaselineService.guardarLineaBase('Belaterra Pietra', tasks, 'Residente de Programación');
+    setTieneLB(true);
+    alert('¡Línea Base congelada con éxito! Esta versión servirá como marco contractual en la Bitácora de Obra.');
+  };
 
   // Cargar datos iniciales directamente del JSON enriquecido
   useEffect(() => {
@@ -128,7 +150,22 @@ export const ResidenteProgramacionView: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {tieneLB ? (
+            <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 border border-emerald-300 text-emerald-800 rounded-xl text-xs font-bold">
+              <Lock className="w-4 h-4 text-emerald-600" />
+              <span>Línea Base Activa</span>
+            </div>
+          ) : (
+            <button
+              onClick={handleCongelarLB}
+              className="flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-bold shadow-sm transition-all"
+            >
+              <Unlock className="w-4 h-4" />
+              <span>Fijar como Línea Base</span>
+            </button>
+          )}
+
           <label className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold shadow-sm cursor-pointer transition-all">
             <Upload className="w-4 h-4" />
             <span>{loading ? 'Calculando...' : 'Cargar Sábana (.xlsx)'}</span>

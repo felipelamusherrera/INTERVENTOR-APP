@@ -3,6 +3,7 @@ import { Header } from './components/common/Header';
 import { ResumenView } from './components/views/ResumenView';
 import { TiempoView } from './components/views/TiempoView';
 import { WbsView } from './components/views/WbsView';
+import { GanttGerencialView } from './components/views/GanttGerencialView';
 import { BitacoraView } from './components/views/BitacoraView';
 import { LookaheadView } from './components/views/LookaheadView';
 import { ProductividadView } from './components/views/ProductividadView';
@@ -97,6 +98,12 @@ export const App: React.FC = () => {
           <TiempoView
             selectedProject={selectedProject}
             selectedTower={selectedTower}
+          />
+        )}
+
+        {activeTab === 'gantt-gerencial' && (
+          <GanttGerencialView
+            selectedProject={selectedProject}
           />
         )}
 

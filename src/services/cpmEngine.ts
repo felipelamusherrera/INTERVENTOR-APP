@@ -21,6 +21,10 @@ export interface CpmTask {
   predecesoraRaw: string;
   predecesores: PredecessoraLink[];
   sucesores: PredecessoraLink[];
+  agrupacion?: string;
+  nivel?: number;
+  proyecto?: string;
+  sucursal?: string;
   
   // Métricas CPM calculadas
   earlyStartDate: string; // Coincide con Comien
@@ -114,6 +118,10 @@ export class CpmEngine {
       comienPrev?: string | number;
       finPrev?: string | number;
       varFin?: number;
+      agrupacion?: string;
+      nivel?: number;
+      proyecto?: string;
+      sucursal?: string;
     }>
   ): { tasks: CpmTask[]; summary: CpmProjectSummary } {
     const taskMap = new Map<number, {
@@ -158,6 +166,10 @@ export class CpmEngine {
         comienPrev: formatDateStr(parseDate(r.comienPrev)),
         finPrev: formatDateStr(parseDate(r.finPrev)),
         varFin: r.varFin,
+        agrupacion: r.agrupacion || 'NO APLICA',
+        nivel: r.nivel !== undefined ? Number(r.nivel) : (r.edt ? r.edt.split('.').length : 1),
+        proyecto: r.proyecto || 'Belaterra Pietra',
+        sucursal: r.sucursal || 'CALI',
         predecesoraRaw: String(r.predecesora || ''),
         predecesores: links,
         sucesores: [],
