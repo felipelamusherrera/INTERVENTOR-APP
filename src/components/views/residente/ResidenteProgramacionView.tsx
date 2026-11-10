@@ -2,19 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { 
   GitBranch, 
   Upload, 
-  Filter, 
   Search, 
   AlertTriangle, 
   CheckCircle2, 
   Clock, 
-  ArrowRight, 
   Layers, 
-  Calendar,
   CloudUpload,
   Check,
-  Info,
   RefreshCw,
-  FileSpreadsheet
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { CpmEngine, CpmTask, CpmProjectSummary } from '../../../services/cpmEngine';
@@ -24,30 +19,15 @@ export const ResidenteProgramacionView: React.FC = () => {
   const [tasks, setTasks] = useState<CpmTask[]>([]);
   const [summary, setSummary] = useState<CpmProjectSummary | null>(null);
   const [loading, setLoading] = useState(false);
-  const [filterMode, setFilterMode] = useState<'TODAS' | 'CRITICAS' | 'RIESGO' | 'RESUMEN'>('TODAS');
+  const [filterMode, setFilterMode] = useState<'TODAS' | 'CRITICAS' | 'RIESGO' | 'HOLGURA' | 'RESUMEN'>('TODAS');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTask, setSelectedTask] = useState<CpmTask | null>(null);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced'>('idle');
 
-  // Cargar datos iniciales predeterminados (del JSON existente)
+  // Cargar datos iniciales directamente del JSON enriquecido
   useEffect(() => {
     try {
-      // Map JSON to format expected by CpmEngine
-      const rawRows = (initialWbsData as any[]).map((d, index) => ({
-        idConsec: d.idConsec || (index + 1),
-        edt: d.edt,
-        nombre: d.nombre,
-        dura: d.dura || d.duraPrev || 0,
-        duraPrev: d.duraPrev || 0,
-        w: d.w || 0,
-        type: d.tipo || (d.nivel <= 3 ? 'project' : 'task'),
-        esHito: d.esHito || false,
-        predecesora: d.predecesora || (index > 0 ? `${index}FC` : ''),
-        comien: d.comien,
-        fin: d.fin,
-      }));
-
-      const res = CpmEngine.computeSchedule(rawRows);
+      const res = CpmEngine.computeSchedule(initialWbsData as any[]);
       setTasks(res.tasks);
       setSummary(res.summary);
     } catch (e) {
@@ -55,7 +35,7 @@ export const ResidenteProgramacionView: React.FC = () => {
     }
   }, []);
 
-  // Procesar archivo Excel cargado por el residente
+  // Procesar archivo Excel cargado directamente por el residente
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -71,17 +51,20 @@ export const ResidenteProgramacionView: React.FC = () => {
         const json = XLSX.utils.sheet_to_json<any>(ws);
 
         const parsedRows = json.map((row: any, idx: number) => ({
-          idConsec: Number(row.IdConsec || row.idConsec || idx + 1),
+          idConsec: Number(row.idConsec || row.IdConsec || idx + 1),
           edt: String(row.EDT || row.edt || ''),
           nombre: String(row.Nombre || row.nombre || `Tarea ${idx + 1}`),
-          dura: Number(row.Dura || row.DuraPrev || row.dura || 0),
-          duraPrev: Number(row.DuraPrev || 0),
+          dura: Number(row.Dura !== undefined ? row.Dura : (row.dura || 0)),
+          duraPrev: Number(row.DuraPrev || row.duraPrev || 0),
           w: row.W !== undefined ? row.W : (row.w || 0),
           type: String(row.type || (row.NivelEsquema <= 3 ? 'project' : 'task')),
-          esHito: Boolean(row.Hitos === 'Si' || row.esHito),
-          predecesora: String(row.Predecesora || row.predecesora || ''),
-          comien: row.Comien,
-          fin: row.Fin,
+          esHito: Boolean(row.Hito === 'Si' || row.esHito),
+          predecesora: String(row.predecesora || row.Predecesora || ''),
+          comien: row.Comien || row.comien,
+          fin: row.Fin || row.fin,
+          comienPrev: row.ComienPrev || row.comienPrev,
+          finPrev: row.FinPrev || row.finPrev,
+          varFin: row.VarFin !== undefined ? Number(row.VarFin) : undefined,
         }));
 
         const res = CpmEngine.computeSchedule(parsedRows);
@@ -117,6 +100,7 @@ export const ResidenteProgramacionView: React.FC = () => {
 
     if (filterMode === 'CRITICAS') return t.esCritica;
     if (filterMode === 'RIESGO') return t.tf > 0 && t.tf <= 5;
+    if (filterMode === 'HOLGURA') return t.tf > 5;
     if (filterMode === 'RESUMEN') return t.type === 'project';
     return true;
   });
@@ -133,11 +117,13 @@ export const ResidenteProgramacionView: React.FC = () => {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl font-bold text-slate-900">Programación de Obra & Ruta Crítica CPM</h1>
-                <span className="text-xs bg-red-100 text-red-800 font-bold px-2.5 py-0.5 rounded-full border border-red-200">
-                  Cálculo en Vivo (TF &le; 0)
+                <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  Fechas Reprogramadas Reales (Comien / Fin)
                 </span>
               </div>
-              <p className="text-sm text-slate-500">Módulo de campo para residentes: vinculación por red de precedencias y monitoreo de cuellos de botella</p>
+              <p className="text-sm text-slate-500">
+                Análisis de la ruta crítica según las fechas oficiales proyectadas por el software y su red de precedencias
+              </p>
             </div>
           </div>
         </div>
@@ -211,10 +197,18 @@ export const ResidenteProgramacionView: React.FC = () => {
             <div className="text-xs text-amber-600 font-medium mt-0.5">Holgura menor a 1 semana</div>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-            <span className="text-xs font-semibold text-slate-500 uppercase">Duración Calculada</span>
-            <div className="text-2xl font-extrabold text-slate-900 mt-1">{summary.duracionProyectoDias} días</div>
-            <div className="text-xs text-slate-400 mt-0.5">Ruta más larga de inicio a fin</div>
+          <div 
+            onClick={() => setFilterMode('HOLGURA')}
+            className="bg-emerald-50/70 p-5 rounded-2xl border border-emerald-200 shadow-sm cursor-pointer hover:bg-emerald-50 transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-emerald-800 uppercase">Con Holgura (TF &gt; 5d)</span>
+              <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            </div>
+            <div className="text-2xl font-extrabold text-emerald-700 mt-1">
+              {summary.totalTareas - summary.tareasCriticas - summary.tareasEnRiesgo}
+            </div>
+            <div className="text-xs text-emerald-600 font-medium mt-0.5">Margen cómodo de holgura</div>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
@@ -239,10 +233,10 @@ export const ResidenteProgramacionView: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
+          <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg overflow-x-auto">
             <button
               onClick={() => setFilterMode('TODAS')}
-              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap ${
                 filterMode === 'TODAS' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -250,7 +244,7 @@ export const ResidenteProgramacionView: React.FC = () => {
             </button>
             <button
               onClick={() => setFilterMode('CRITICAS')}
-              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap ${
                 filterMode === 'CRITICAS' ? 'bg-red-600 text-white shadow-sm' : 'text-red-700 hover:bg-red-50'
               }`}
             >
@@ -258,15 +252,23 @@ export const ResidenteProgramacionView: React.FC = () => {
             </button>
             <button
               onClick={() => setFilterMode('RIESGO')}
-              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap ${
                 filterMode === 'RIESGO' ? 'bg-amber-600 text-white shadow-sm' : 'text-amber-700 hover:bg-amber-50'
               }`}
             >
               🟡 En Riesgo ({summary?.tareasEnRiesgo || 0})
             </button>
             <button
+              onClick={() => setFilterMode('HOLGURA')}
+              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap ${
+                filterMode === 'HOLGURA' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-700 hover:bg-emerald-50'
+              }`}
+            >
+              🟢 Holgura OK
+            </button>
+            <button
               onClick={() => setFilterMode('RESUMEN')}
-              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap ${
                 filterMode === 'RESUMEN' ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -289,13 +291,12 @@ export const ResidenteProgramacionView: React.FC = () => {
                 <th className="py-3 px-3 font-bold w-14">Id</th>
                 <th className="py-3 px-3 font-bold w-24">EDT</th>
                 <th className="py-3 px-4 font-bold min-w-[240px]">Descripción Actividad</th>
-                <th className="py-3 px-3 font-bold text-center w-16">Días</th>
+                <th className="py-3 px-3 font-bold text-center w-16">Dura</th>
                 <th className="py-3 px-3 font-bold text-center w-16">% W</th>
                 <th className="py-3 px-3 font-bold min-w-[140px]">Predecesora</th>
-                <th className="py-3 px-3 font-bold text-center">ES (Inicio T.)</th>
-                <th className="py-3 px-3 font-bold text-center">EF (Fin T.)</th>
-                <th className="py-3 px-3 font-bold text-center">LS (Inicio T.)</th>
-                <th className="py-3 px-3 font-bold text-center">LF (Fin T.)</th>
+                <th className="py-3 px-3 font-bold text-center">Comienzo (Comien)</th>
+                <th className="py-3 px-3 font-bold text-center">Fin (Fin)</th>
+                <th className="py-3 px-3 font-bold text-center">Fin Tardío (LF)</th>
                 <th className="py-3 px-3 font-bold text-center w-20">Holgura (TF)</th>
                 <th className="py-3 px-3 font-bold text-center w-24">Estado CPM</th>
               </tr>
@@ -336,10 +337,9 @@ export const ResidenteProgramacionView: React.FC = () => {
                     <td className="py-2.5 px-3 font-mono text-[11px] text-slate-600 truncate max-w-[160px]" title={task.predecesoraRaw}>
                       {task.predecesoraRaw || '-'}
                     </td>
-                    <td className="py-2.5 px-3 text-center font-mono text-slate-600">{task.earlyStartDate}</td>
-                    <td className="py-2.5 px-3 text-center font-mono text-slate-600">{task.earlyFinishDate}</td>
-                    <td className="py-2.5 px-3 text-center font-mono text-slate-500">{task.lateStartDate}</td>
-                    <td className="py-2.5 px-3 text-center font-mono text-slate-500">{task.lateFinishDate}</td>
+                    <td className="py-2.5 px-3 text-center font-mono font-semibold text-slate-800">{task.comien}</td>
+                    <td className="py-2.5 px-3 text-center font-mono font-semibold text-slate-800">{task.fin}</td>
+                    <td className="py-2.5 px-3 text-center font-mono text-slate-500">{task.lateFinishDate || '-'}</td>
                     <td className="py-2.5 px-3 text-center font-mono font-bold">
                       <span className={`px-2 py-0.5 rounded ${
                         task.tf <= 0 
@@ -361,7 +361,9 @@ export const ResidenteProgramacionView: React.FC = () => {
                           RIESGO
                         </span>
                       ) : (
-                        <span className="text-[11px] text-slate-500 font-medium">Holgura OK</span>
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                          HOLGURA
+                        </span>
                       )}
                     </td>
                   </tr>
@@ -386,7 +388,15 @@ export const ResidenteProgramacionView: React.FC = () => {
               </button>
             </div>
 
-            <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl text-xs text-center">
+            <div className="grid grid-cols-4 gap-2 bg-slate-50 p-3 rounded-xl text-xs text-center">
+              <div>
+                <span className="text-slate-500">Comienzo:</span>
+                <div className="font-bold text-slate-800 mt-0.5">{selectedTask.comien}</div>
+              </div>
+              <div>
+                <span className="text-slate-500">Fin Reprog:</span>
+                <div className="font-bold text-slate-800 mt-0.5">{selectedTask.fin}</div>
+              </div>
               <div>
                 <span className="text-slate-500">Duración:</span>
                 <div className="font-bold text-slate-800 mt-0.5">{selectedTask.dura} días</div>
@@ -397,13 +407,9 @@ export const ResidenteProgramacionView: React.FC = () => {
                   {selectedTask.tf} días
                 </div>
               </div>
-              <div>
-                <span className="text-slate-500">Avance W:</span>
-                <div className="font-bold text-blue-700 mt-0.5">{(selectedTask.w * 100).toFixed(0)}%</div>
-              </div>
             </div>
 
-            {/* Predecessores */}
+            {/* Predecesores */}
             <div>
               <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
                 Predecesoras ({selectedTask.predecesores.length})

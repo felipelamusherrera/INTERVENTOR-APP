@@ -62,6 +62,7 @@ export interface MajorDelay {
 }
 
 export interface WbsItem {
+  idConsec?: number;
   edt: string;
   nivel: number;
   esHito: boolean;
@@ -75,10 +76,13 @@ export interface WbsItem {
   fin: string;
   varComien: number;
   varFin: number;
-  responsable: string;
-  unidad: string;
-  cantidad: string;
-  rendimiento: string;
+  responsable?: string;
+  unidad?: string;
+  cantidad?: string;
+  rendimiento?: string;
+  predecesora?: string;
+  agrupacion?: string;
+  codigoPlaneacion?: string;
   tipo: string;
   etapa: string;
 }
