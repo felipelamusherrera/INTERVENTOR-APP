@@ -284,6 +284,69 @@ export const Header: React.FC<HeaderProps> = ({
           })}
         </nav>
       </div>
+
+      {/* Mobile Bottom Navigation Bar (Acceso Rápido Residente de Obra) */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 py-1.5 px-2 flex justify-around items-center md:hidden shadow-2xl no-print">
+        <button
+          onClick={() => setActiveTab('residente-programacion')}
+          className={`flex flex-col items-center justify-center min-h-[48px] px-1.5 rounded-xl transition-all ${
+            activeTab === 'residente-programacion' ? 'text-blue-600 font-extrabold scale-105' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <GitBranch className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">Prog/CPM</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('residente-presupuesto')}
+          className={`flex flex-col items-center justify-center min-h-[48px] px-1.5 rounded-xl transition-all ${
+            activeTab === 'residente-presupuesto' ? 'text-blue-600 font-extrabold scale-105' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Coins className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">Costos</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('residente-calidad')}
+          className={`flex flex-col items-center justify-center min-h-[48px] px-1.5 rounded-xl transition-all ${
+            activeTab === 'residente-calidad' ? 'text-blue-600 font-extrabold scale-105' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Award className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">Sellos</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('residente-cto')}
+          className={`flex flex-col items-center justify-center min-h-[48px] px-1.5 rounded-xl transition-all ${
+            activeTab === 'residente-cto' ? 'text-blue-600 font-extrabold scale-105' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <ShieldCheck className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">CTO</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('residente-productividad')}
+          className={`flex flex-col items-center justify-center min-h-[48px] px-1.5 rounded-xl transition-all ${
+            activeTab === 'residente-productividad' ? 'text-blue-600 font-extrabold scale-105' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Users className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">Cuadrillas</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('resumen')}
+          className={`flex flex-col items-center justify-center min-h-[48px] px-1.5 rounded-xl transition-all ${
+            activeTab === 'resumen' || activeTab === 'usuarios' ? 'text-blue-600 font-extrabold scale-105' : 'text-slate-500 hover:text-slate-700'
+          }`}
+        >
+          <Building2 className="w-5 h-5" />
+          <span className="text-[10px] mt-0.5 font-medium">Más</span>
+        </button>
+      </nav>
     </header>
   );
 };
