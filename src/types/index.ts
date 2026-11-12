@@ -115,9 +115,15 @@ export interface WeeklyLog {
 export interface LookaheadGate {
   id: string;
   actividad: string;
+  edt?: string;
   frente: string;
   semana: string;
   responsable: string;
+  esCritica?: boolean;
+  origen?: 'BITACORA_CAMPO' | 'PLANIFICACION';
+  observaciones?: string;
+  restriccionPrincipal?: string;
+  estadoGestion?: 'PENDIENTE' | 'EN_GESTION' | 'LIBERADO';
   gates: {
     diseno: boolean;
     contratacion: boolean;

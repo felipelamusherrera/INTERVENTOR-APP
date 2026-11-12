@@ -1,5 +1,6 @@
 import { CpmTask } from './cpmEngine';
 import { SharePointService, SHAREPOINT_LISTS } from './sharepointService';
+import { LookaheadGate } from '../types';
 
 export interface BaselineRecord {
   idConsec: number;
@@ -68,6 +69,10 @@ export interface ActividadSemanalBitacora {
 
 export interface CalificacionActividad {
   idConsec: number;
+  edt?: string;
+  nombre?: string;
+  agrupacion?: string;
+  esCritica?: boolean;
   calificado: boolean;
   cumpleInicio: boolean | null;
   cumpleFin: boolean | null;
@@ -123,6 +128,22 @@ const KEY_LB_PREFIX = 'marval_pco_baseline_';
 const KEY_LB_META_PREFIX = 'marval_pco_baseline_meta_';
 const KEY_REPORTES_SEMANALES = 'marval_pco_reportes_bitacora_v1';
 const KEY_CALIFICACIONES_TEMP_PREFIX = 'marval_pco_calif_temp_';
+const KEY_LOOKAHEAD_RESOLUCIONES = 'marval_pco_lookahead_resoluciones_v1';
+
+/**
+ * Mapea la causa de no inicio seleccionada en bitácora a la compuerta correspondiente del Lookahead.
+ */
+export function mapRestriccionToGateKey(restriccion: string): keyof LookaheadGate['gates'] {
+  const r = (restriccion || '').toLowerCase();
+  if (r.includes('diseño') || r.includes('plano')) return 'diseno';
+  if (r.includes('contrat') || r.includes('adjudicaci')) return 'contratacion';
+  if (r.includes('predecesora')) return 'predecesora';
+  if (r.includes('material') || r.includes('compra')) return 'materiales';
+  if (r.includes('mano de obra') || r.includes('cuadrilla') || r.includes('personal')) return 'manoObra';
+  if (r.includes('equipo') || r.includes('maquinaria')) return 'equipos';
+  if (r.includes('sst') || r.includes('permiso') || r.includes('licencia') || r.includes('ambiental')) return 'sstAmbiental';
+  return 'materiales';
+}
 
 export class BaselineService {
   /**
@@ -522,5 +543,149 @@ export class BaselineService {
     } catch {
       return [];
     }
+  }
+
+  /**
+   * Obtiene el diccionario de resoluciones y acciones correctivas aplicadas en Lookahead.
+   */
+  static getResolucionesLookahead(): Record<string, { gates?: Partial<LookaheadGate['gates']>; estadoGestion?: 'PENDIENTE' | 'EN_GESTION' | 'LIBERADO'; notasGestion?: string; fechaResolucion?: string }> {
+    try {
+      const raw = localStorage.getItem(KEY_LOOKAHEAD_RESOLUCIONES);
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  /**
+   * Guarda una acción de resolución o liberación sobre una compuerta en Lookahead.
+   */
+  static guardarResolucionLookahead(
+    gateId: string, 
+    updates: { gates?: Partial<LookaheadGate['gates']>; estadoGestion?: 'PENDIENTE' | 'EN_GESTION' | 'LIBERADO'; notasGestion?: string }
+  ): void {
+    const all = this.getResolucionesLookahead();
+    all[gateId] = {
+      ...all[gateId],
+      ...updates,
+      fechaResolucion: new Date().toISOString()
+    };
+    localStorage.setItem(KEY_LOOKAHEAD_RESOLUCIONES, JSON.stringify(all));
+    window.dispatchEvent(new CustomEvent('marval_lookahead_updated'));
+  }
+
+  /**
+   * Consolida dinámicamente las restricciones de arranque registradas en Bitácora
+   * (tanto borradores en edición como reportes cerrados) para alimentar la matriz de 7 compuertas Lookahead.
+   */
+  static getRestriccionesLookaheadFeed(proyecto: string = 'Belaterra Pietra'): LookaheadGate[] {
+    const resoluciones = this.getResolucionesLookahead();
+    const feedItems: LookaheadGate[] = [];
+    const idSet = new Set<string>();
+
+    // 1. Extraer restricciones de borradores en edición
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith(`${KEY_CALIFICACIONES_TEMP_PREFIX}${proyecto}`)) {
+          const semanaPart = key.split('_').slice(-1)[0] || 'W0';
+          const califs = JSON.parse(localStorage.getItem(key) || '{}');
+          
+          Object.values(califs).forEach((c: any) => {
+            if (c && c.cumpleInicio === false && c.causaNoInicio) {
+              const id = `bitacora-temp-${c.idConsec}-${semanaPart}`;
+              if (!idSet.has(id)) {
+                idSet.add(id);
+                const failedGate = mapRestriccionToGateKey(c.causaNoInicio);
+                const defaultGates: LookaheadGate['gates'] = {
+                  diseno: true,
+                  contratacion: true,
+                  predecesora: true,
+                  materiales: true,
+                  manoObra: true,
+                  equipos: true,
+                  sstAmbiental: true,
+                  [failedGate]: false,
+                };
+
+                const res = resoluciones[id];
+                const finalGates = res?.gates ? { ...defaultGates, ...res.gates } : defaultGates;
+                const trueCount = Object.values(finalGates).filter(Boolean).length;
+                const ip = Math.round((trueCount / 7) * 100);
+
+                feedItems.push({
+                  id,
+                  edt: c.edt || 'EDT',
+                  actividad: c.nombre || `Actividad ${c.idConsec}`,
+                  frente: c.agrupacion || 'Obra General',
+                  semana: semanaPart.replace('-', ' '),
+                  responsable: c.residente || 'Residente Interventoría',
+                  esCritica: Boolean(c.esCritica),
+                  origen: 'BITACORA_CAMPO',
+                  observaciones: c.observaciones || 'Restricción levantada en bitácora de obra.',
+                  restriccionPrincipal: c.causaNoInicio,
+                  estadoGestion: res?.estadoGestion || (finalGates[failedGate] ? 'LIBERADO' : 'PENDIENTE'),
+                  gates: finalGates,
+                  indicePreparacion: ip,
+                });
+              }
+            }
+          });
+        }
+      }
+    } catch (err) {
+      console.warn('Error leyendo borradores de bitácora para Lookahead:', err);
+    }
+
+    // 2. Extraer restricciones de reportes cerrados oficiales
+    try {
+      const reportes = this.getReportesSemanales(proyecto);
+      reportes.forEach(rep => {
+        rep.items.forEach(item => {
+          if (item.cumpleInicio === false && item.causaNoInicio) {
+            const id = `bitacora-rep-${item.idConsec}-W${rep.semana}`;
+            if (!idSet.has(id)) {
+              idSet.add(id);
+              const failedGate = mapRestriccionToGateKey(item.causaNoInicio);
+              const defaultGates: LookaheadGate['gates'] = {
+                diseno: true,
+                contratacion: true,
+                predecesora: true,
+                materiales: true,
+                manoObra: true,
+                equipos: true,
+                sstAmbiental: true,
+                [failedGate]: false,
+              };
+
+              const res = resoluciones[id];
+              const finalGates = res?.gates ? { ...defaultGates, ...res.gates } : defaultGates;
+              const trueCount = Object.values(finalGates).filter(Boolean).length;
+              const ip = Math.round((trueCount / 7) * 100);
+
+              feedItems.push({
+                id,
+                edt: item.edt,
+                actividad: item.nombre,
+                frente: item.agrupacion || 'Obra General',
+                semana: `Semana ${rep.semana}`,
+                responsable: item.residente || rep.residente || 'Residente Interventoría',
+                esCritica: Boolean(item.esCritica),
+                origen: 'BITACORA_CAMPO',
+                observaciones: item.observaciones || 'Registrado en cierre de bitácora semanal.',
+                restriccionPrincipal: item.causaNoInicio,
+                estadoGestion: res?.estadoGestion || (finalGates[failedGate] ? 'LIBERADO' : 'PENDIENTE'),
+                gates: finalGates,
+                indicePreparacion: ip,
+              });
+            }
+          }
+        });
+      });
+    } catch (err) {
+      console.warn('Error leyendo reportes de bitácora para Lookahead:', err);
+    }
+
+    return feedItems;
   }
 }

@@ -181,13 +181,17 @@ export const BitacoraView: React.FC = () => {
 
   // Manejo de Calificación de Actividad Individual
   const handleCalificar = (
-    idConsec: number, 
+    act: ActividadSemanalBitacora, 
     campo: 'cumpleInicio' | 'cumpleFin', 
     valor: boolean | null
   ) => {
     setCalificaciones(prev => {
-      const actual = prev[idConsec] || {
-        idConsec,
+      const actual = prev[act.idConsec] || {
+        idConsec: act.idConsec,
+        edt: act.edt,
+        nombre: act.nombre,
+        agrupacion: act.agrupacion,
+        esCritica: act.esCritica,
         calificado: true,
         cumpleInicio: null,
         cumpleFin: null,
@@ -198,12 +202,16 @@ export const BitacoraView: React.FC = () => {
 
       const updated = {
         ...actual,
+        edt: act.edt,
+        nombre: act.nombre,
+        agrupacion: act.agrupacion,
+        esCritica: act.esCritica,
         [campo]: valor,
         calificado: true,
         fechaCalificacion: new Date().toISOString()
       };
 
-      const newState = { ...prev, [idConsec]: updated };
+      const newState = { ...prev, [act.idConsec]: updated };
       // Guardar borrador en storage
       const semanaKey = `${infoSemana.anio}-W${infoSemana.numeroSemana}`;
       BaselineService.guardarCalificacionesTemp(proyecto, semanaKey, newState);
@@ -211,10 +219,14 @@ export const BitacoraView: React.FC = () => {
     });
   };
 
-  const handleCausaChange = (idConsec: number, tipo: 'inicio' | 'fin', causa: string) => {
+  const handleCausaChange = (act: ActividadSemanalBitacora, tipo: 'inicio' | 'fin', causa: string) => {
     setCalificaciones(prev => {
-      const actual = prev[idConsec] || {
-        idConsec,
+      const actual = prev[act.idConsec] || {
+        idConsec: act.idConsec,
+        edt: act.edt,
+        nombre: act.nombre,
+        agrupacion: act.agrupacion,
+        esCritica: act.esCritica,
         calificado: true,
         cumpleInicio: null,
         cumpleFin: null,
@@ -223,20 +235,28 @@ export const BitacoraView: React.FC = () => {
 
       const updated = {
         ...actual,
+        edt: act.edt,
+        nombre: act.nombre,
+        agrupacion: act.agrupacion,
+        esCritica: act.esCritica,
         [tipo === 'inicio' ? 'causaNoInicio' : 'causaNoFin']: causa
       };
 
-      const newState = { ...prev, [idConsec]: updated };
+      const newState = { ...prev, [act.idConsec]: updated };
       const semanaKey = `${infoSemana.anio}-W${infoSemana.numeroSemana}`;
       BaselineService.guardarCalificacionesTemp(proyecto, semanaKey, newState);
       return newState;
     });
   };
 
-  const handleObservacionChange = (idConsec: number, obs: string) => {
+  const handleObservacionChange = (act: ActividadSemanalBitacora, obs: string) => {
     setCalificaciones(prev => {
-      const actual = prev[idConsec] || {
-        idConsec,
+      const actual = prev[act.idConsec] || {
+        idConsec: act.idConsec,
+        edt: act.edt,
+        nombre: act.nombre,
+        agrupacion: act.agrupacion,
+        esCritica: act.esCritica,
         calificado: true,
         cumpleInicio: null,
         cumpleFin: null,
@@ -245,10 +265,14 @@ export const BitacoraView: React.FC = () => {
 
       const updated = {
         ...actual,
+        edt: act.edt,
+        nombre: act.nombre,
+        agrupacion: act.agrupacion,
+        esCritica: act.esCritica,
         observaciones: obs
       };
 
-      const newState = { ...prev, [idConsec]: updated };
+      const newState = { ...prev, [act.idConsec]: updated };
       const semanaKey = `${infoSemana.anio}-W${infoSemana.numeroSemana}`;
       BaselineService.guardarCalificacionesTemp(proyecto, semanaKey, newState);
       return newState;
@@ -822,7 +846,7 @@ export const BitacoraView: React.FC = () => {
                           <div className="grid grid-cols-2 gap-2">
                             <button
                               type="button"
-                              onClick={() => handleCalificar(act.idConsec, 'cumpleInicio', true)}
+                              onClick={() => handleCalificar(act, 'cumpleInicio', true)}
                               className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
                                 cal.cumpleInicio === true
                                   ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400'
@@ -835,7 +859,7 @@ export const BitacoraView: React.FC = () => {
 
                             <button
                               type="button"
-                              onClick={() => handleCalificar(act.idConsec, 'cumpleInicio', false)}
+                              onClick={() => handleCalificar(act, 'cumpleInicio', false)}
                               className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
                                 cal.cumpleInicio === false
                                   ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400'
@@ -855,7 +879,7 @@ export const BitacoraView: React.FC = () => {
                               </label>
                               <select
                                 value={cal.causaNoInicio || ''}
-                                onChange={(e) => handleCausaChange(act.idConsec, 'inicio', e.target.value)}
+                                onChange={(e) => handleCausaChange(act, 'inicio', e.target.value)}
                                 className="w-full bg-red-50/50 border border-red-300 text-xs text-red-900 rounded-lg p-2 font-medium focus:ring-2 focus:ring-red-500 focus:outline-none"
                               >
                                 <option value="">-- Seleccione Compuerta Fallida --</option>
@@ -883,7 +907,7 @@ export const BitacoraView: React.FC = () => {
                           <div className="grid grid-cols-2 gap-2">
                             <button
                               type="button"
-                              onClick={() => handleCalificar(act.idConsec, 'cumpleFin', true)}
+                              onClick={() => handleCalificar(act, 'cumpleFin', true)}
                               className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
                                 cal.cumpleFin === true
                                   ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400'
@@ -896,7 +920,7 @@ export const BitacoraView: React.FC = () => {
 
                             <button
                               type="button"
-                              onClick={() => handleCalificar(act.idConsec, 'cumpleFin', false)}
+                              onClick={() => handleCalificar(act, 'cumpleFin', false)}
                               className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
                                 cal.cumpleFin === false
                                   ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400'
@@ -916,7 +940,7 @@ export const BitacoraView: React.FC = () => {
                               </label>
                               <select
                                 value={cal.causaNoFin || ''}
-                                onChange={(e) => handleCausaChange(act.idConsec, 'fin', e.target.value)}
+                                onChange={(e) => handleCausaChange(act, 'fin', e.target.value)}
                                 className="w-full bg-red-50/50 border border-red-300 text-xs text-red-900 rounded-lg p-2 font-medium focus:ring-2 focus:ring-red-500 focus:outline-none"
                               >
                                 <option value="">-- Seleccione Causa Operativa --</option>
@@ -959,7 +983,7 @@ export const BitacoraView: React.FC = () => {
                               : "Observaciones de seguimiento o notas de obra (opcional)..."
                           }
                           value={cal.observaciones || ''}
-                          onChange={(e) => handleObservacionChange(act.idConsec, e.target.value)}
+                          onChange={(e) => handleObservacionChange(act, e.target.value)}
                           className={`w-full text-xs rounded-lg p-2.5 transition-all ${
                             obsInvalida
                               ? 'bg-red-50 border-2 border-red-500 text-red-900 placeholder-red-400 focus:outline-none ring-2 ring-red-200'

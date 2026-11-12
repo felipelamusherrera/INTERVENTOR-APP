@@ -108,7 +108,9 @@ export const App: React.FC = () => {
         )}
 
         {activeTab === 'lookahead' && (
-          <LookaheadView />
+          <LookaheadView
+            selectedProject={selectedProject}
+          />
         )}
 
         {activeTab === 'elevacion' && (
