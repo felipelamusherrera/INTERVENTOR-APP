@@ -400,7 +400,7 @@ export const BitacoraView: React.FC = () => {
   }, [calificaciones]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 w-full pb-16">
       {/* Toast Notification */}
       {toastMessage && (
         <div className={`fixed bottom-5 right-5 z-50 p-4 rounded-xl shadow-xl flex items-center space-x-3 text-sm font-semibold transition-all duration-300 ${

@@ -275,7 +275,7 @@ export const GanttGerencialView: React.FC<GanttGerencialViewProps> = ({
   const totalHolgura = visibleTasks.filter(t => !t.esCritica).length;
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto pb-16">
+    <div className="space-y-6 w-full pb-16">
       {/* Header Bar */}
       <div className="bg-white border border-surface-border rounded-xl p-5 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">

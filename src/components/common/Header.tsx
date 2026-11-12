@@ -105,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="bg-white border-b border-surface-border sticky top-0 z-30 shadow-sm no-print">
       {/* Top Level Brand Bar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 2xl:px-12">
         <div className="flex items-center justify-between h-16 border-b border-slate-100">
           <div className="flex items-center space-x-3">
             <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-brand-900 via-brand-700 to-blue-600 flex items-center justify-center text-white font-bold shadow-md tracking-wider">
