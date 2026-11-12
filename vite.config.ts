@@ -7,6 +7,6 @@ export default defineConfig({
   base: './', // Permite que la app funcione tanto en localhost como en GitHub Pages, Vercel o subcarpetas
   server: {
     host: true, // Expone el servidor a la red local (Wi-Fi)
-    port: 5173,
+    port: 5174,
   },
 })
