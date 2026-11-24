@@ -16,7 +16,6 @@ import {
 import * as XLSX from 'xlsx';
 import { CpmEngine, CpmTask, CpmProjectSummary } from '../../../services/cpmEngine';
 import { BaselineService } from '../../../services/baselineService';
-import initialWbsData from '../../../data/wbsBelaterraFull.json';
 
 export const ResidenteProgramacionView: React.FC = () => {
   const [tasks, setTasks] = useState<CpmTask[]>([]);
@@ -45,17 +44,6 @@ export const ResidenteProgramacionView: React.FC = () => {
     setTieneLB(true);
     alert('¡Línea Base congelada con éxito! Esta versión servirá como marco contractual en la Bitácora de Obra.');
   };
-
-  // Cargar datos iniciales directamente del JSON enriquecido
-  useEffect(() => {
-    try {
-      const res = CpmEngine.computeSchedule(initialWbsData as any[]);
-      setTasks(res.tasks);
-      setSummary(res.summary);
-    } catch (e) {
-      console.error('Error calculando CPM inicial:', e);
-    }
-  }, []);
 
   // Procesar archivo Excel cargado directamente por el residente
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

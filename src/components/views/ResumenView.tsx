@@ -13,7 +13,11 @@ import {
   Download
 } from 'lucide-react';
 import { PortfolioItem, Sucursal } from '../../types';
-import { portfolioEjecucion, portfolioEntregados } from '../../data/mockData';
+import { ProjectService } from '../../services/projectService';
+import { ScheduleService } from '../../services/scheduleService';
+import { BaselineService } from '../../services/baselineService';
+import { CalidadSellosEngine } from '../../services/calidadSellosEngine';
+import { CtoEngine } from '../../services/ctoEngine';
 
 interface ResumenViewProps {
   selectedSucursal: Sucursal;
@@ -30,7 +34,58 @@ export const ResumenView: React.FC<ResumenViewProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGerencia, setSelectedGerencia] = useState('TODAS');
 
-  const rawList = activeSubTab === 'P-EJECUCION' ? portfolioEjecucion : portfolioEntregados;
+  // Construir portafolio exclusivamente a partir de proyectos reales cargados por residentes en la plataforma
+  const realProjects: PortfolioItem[] = ProjectService.getAllProjects().map((p) => {
+    const tasks = ScheduleService.getActiveSchedule(p.id);
+    const tieneLB = BaselineService.tieneLineaBase(p.id);
+    const reportes = BaselineService.getReportesSemanales(p.id);
+    const lastRep = reportes[0];
+    const sellos = CalidadSellosEngine.getActivities(p.id);
+    const allInsps = sellos.flatMap((s) => s.inspecciones);
+    const okInsps = allInsps.filter((i) => i.resultado === '0').length;
+    const selloPct = allInsps.length > 0 ? Math.round((okInsps / allInsps.length) * 100) : 0;
+
+    const ctoAll = Object.values(CtoEngine.getAllEvaluacionesProyecto(p.id)).flat();
+    const ctoOk = ctoAll.filter((c) => c.estadoFase === '3_APROBACION_SUPERVISOR_TECNICO').length;
+    const ctoPct = ctoAll.length > 0 ? Math.round((ctoOk / ctoAll.length) * 100) : 0;
+
+    const cumplimiento = lastRep
+      ? Math.round((lastRep.cumplimientoInicioPct + lastRep.cumplimientoFinPct) / 2)
+      : tieneLB
+        ? 100
+        : 0;
+
+    const estado: PortfolioItem['estado'] = !tieneLB
+      ? 'En riesgo'
+      : cumplimiento >= 85
+        ? 'Al día'
+        : cumplimiento >= 65
+          ? 'En riesgo'
+          : 'Crítico';
+
+    const primeraTorre = ProjectService.getTorresEstructura(p.id)[0] || 'Sin torres';
+    const maxFin = tasks.reduce((mx, t) => (t.fin && t.fin > mx ? t.fin : mx), '');
+
+    return {
+      id: p.id,
+      sucursal: p.sucursal,
+      gerencia: p.nombreGerenteProyectos || 'Sin asignar',
+      proyecto: p.nombreJde,
+      tab: 'P-EJECUCION',
+      fechaPrometida: maxFin || 'Sin LB',
+      fechaConfirmada: maxFin || 'Sin LB',
+      cumplimiento,
+      compuertas: { m12: ctoPct, m6: selloPct, m3: cumplimiento },
+      costos: { totales: 0, viv: 0, urb: 0, adminis: 0 },
+      selloCalidad: selloPct,
+      productividad: cumplimiento,
+      ctoCumplimiento: ctoPct,
+      estado,
+      proximaTorre: primeraTorre,
+    };
+  });
+
+  const rawList = activeSubTab === 'P-EJECUCION' ? realProjects : [];
 
   const filteredProjects = rawList.filter((item) => {
     const matchSucursal = selectedSucursal === 'TODAS' || item.sucursal === selectedSucursal;
@@ -50,15 +105,15 @@ export const ResumenView: React.FC<ResumenViewProps> = ({
 
   const avgCalidad = totalCount > 0 
     ? Math.round(filteredProjects.reduce((acc, curr) => acc + curr.selloCalidad, 0) / totalCount) 
-    : 85;
+    : 0;
 
   const avgProductividad = totalCount > 0 
     ? Math.round(filteredProjects.reduce((acc, curr) => acc + curr.productividad, 0) / totalCount) 
-    : 82;
+    : 0;
 
   const avgCto = totalCount > 0 
     ? Math.round(filteredProjects.reduce((acc, curr) => acc + curr.ctoCumplimiento, 0) / totalCount) 
-    : 78;
+    : 0;
 
   return (
     <div className="space-y-6">
@@ -164,7 +219,7 @@ export const ResumenView: React.FC<ResumenViewProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            P-EJECUCIÓN ({portfolioEjecucion.length})
+            P-EJECUCIÓN ({realProjects.length})
           </button>
           <button
             onClick={() => setActiveSubTab('P-ENTREGADOS')}
@@ -174,7 +229,7 @@ export const ResumenView: React.FC<ResumenViewProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            P-ENTREGADOS ({portfolioEntregados.length})
+            P-ENTREGADOS (0)
           </button>
         </div>
 

@@ -3,243 +3,213 @@ import { Rol, ModuloSistema, MatrizPermisos } from '../types/auth';
 export const MODULOS_SISTEMA: ModuloSistema[] = [
   // 1. Operación Campo (Residentes de Interventoría)
   {
-    id: 'residente-programacion',
-    label: 'Prog. Obra & CPM',
+    id: 'parametros',
+    label: 'Parámetros del proyecto',
     seccion: 'Operación Campo',
-    descripcion: 'Carga de sábana WorkPlanner, red de precedencias y cálculo de ruta crítica en vivo.',
-    icono: 'GitBranch',
-    badge: 'CPM Vivo',
+    descripcion: 'Datos maestros JDE, estructura HC/Torres (TORRE 01–50) y parametrización de pisos e inmuebles.',
+    icono: 'Sliders',
+    badge: 'Paso 1',
   },
   {
-    id: 'residente-presupuesto',
-    label: 'Presupuesto & Costos',
+    id: 'wbs',
+    label: 'Programación & EDT',
+    seccion: 'Control & Programación',
+    descripcion: 'Fuente única de carga de Workplanner, Línea Base, cortes semanales, Gantt Ruta Crítica y desviaciones.',
+    icono: 'ListTree',
+    badge: 'Paso 2',
+  },
+  {
+    id: 'bitacora',
+    label: 'Bitácora de Campo',
     seccion: 'Operación Campo',
-    descripcion: 'Control jerárquico Opus (Capítulos/Subcapítulos) y libreta de comentarios de campo.',
-    icono: 'Coins',
-    badge: 'Opus ND',
+    descripcion: 'Seguimiento semanal 1A Inicios / 1B Fines programados, Lookahead, Sellos y CTO.',
+    icono: 'CheckSquare',
+    badge: 'Cockpit 5 en 1',
+  },
+  {
+    id: 'residente-lookahead',
+    label: 'Reporte de restricciones LEAN',
+    seccion: 'Operación Campo',
+    descripcion: 'Matriz operativa de 6 semanas por tarea resumen y seguimiento a las 6 restricciones de arranque.',
+    icono: 'AlertTriangle',
+    badge: '6 Sem',
   },
   {
     id: 'residente-calidad',
-    label: 'Sellos de Calidad',
+    label: 'Indicadores Sellos',
     seccion: 'Operación Campo',
-    descripcion: 'Inspección rápida de sellos (0, X, R) por torre, piso, apartamento y contratista.',
+    descripcion: 'Inspección de sellos de calidad por torre, piso, apartamento y contratista.',
     icono: 'Award',
-    badge: 'Campo',
+    badge: 'Calidad',
   },
   {
     id: 'residente-cto',
-    label: 'Compromisos CTO',
+    label: 'Matriz CTO Proyecto',
     seccion: 'Operación Campo',
-    descripcion: 'Registro de actas y compromisos técnicos en las 6 categorías de interventoría.',
+    descripcion: 'Estado CTO por agrupación, seguimiento de los 56 criterios e histórico de bitácora.',
     icono: 'ShieldCheck',
-    badge: 'Actas',
+    badge: 'Ley 1796',
+  },
+  {
+    id: 'elevacion',
+    label: 'Elevación 3D',
+    seccion: 'Operación Campo',
+    descripcion: 'Matriz vertical de avance piso por piso, series y sellos por apartamento.',
+    icono: 'Layers',
+    badge: 'Torres',
+  },
+  {
+    id: 'residente-presupuesto',
+    label: 'Presupuesto Opus',
+    seccion: 'Operación Campo',
+    descripcion: 'Control jerárquico Opus (Capítulos/Subcapítulos) y libreta de comentarios de campo.',
+    icono: 'Coins',
+    badge: 'Costos',
   },
   {
     id: 'residente-productividad',
-    label: 'Censo de Cuadrillas',
+    label: 'Censo Cuadrillas',
     seccion: 'Operación Campo',
     descripcion: 'Reporte diario de personal en sitio por contratista, frentes y horas perdidas.',
     icono: 'Users',
     badge: 'Diario',
   },
 
-  // 2. Control & Programación
-  {
-    id: 'wbs',
-    label: 'WBS / EDT',
-    seccion: 'Control & Programación',
-    descripcion: 'Estructura analítica de descomposición de obra con árbol expandible y curvas.',
-    icono: 'Network',
-  },
+  // 2. Gestión Gerencial (Solo lectura para Directivos / Gerentes)
   {
     id: 'tiempo',
-    label: 'Hitos & Curva S',
-    seccion: 'Control & Programación',
-    descripcion: 'Programación maestra, compuertas M-12/M-6/M-3 y desviaciones de hitos críticos.',
+    label: 'Control de Tiempo',
+    seccion: 'Gestión Gerencial',
+    descripcion: 'Programación maestra consolidada, compuertas y desviaciones de hitos críticos.',
     icono: 'Clock',
   },
   {
-    id: 'gantt-gerencial',
-    label: 'Gantt Gerencial',
-    seccion: 'Control & Programación',
-    descripcion: 'Diagrama de Gantt ejecutivo (Nivel 6 Torre / Nivel 5 Otras) con árbol colapsable y CPM.',
-    icono: 'BarChart3',
-    badge: 'EDT 6/5',
-  },
-  {
     id: 'lookahead',
-    label: 'Lookahead 4 Sem.',
-    seccion: 'Control & Programación',
-    descripcion: 'Ventana de planificación a 4 semanas para desatascar restricciones de contratistas.',
+    label: 'Lookahead & SLAs',
+    seccion: 'Gestión Gerencial',
+    descripcion: 'Consolidado gerencial de restricciones y acuerdos de servicio por área.',
     icono: 'Calendar',
   },
   {
-    id: 'elevacion',
-    label: 'Elevación & Fachadas',
-    seccion: 'Control & Programación',
-    descripcion: 'Matriz vertical de avance piso por piso y torre por torre.',
-    icono: 'Layers',
-  },
-
-  // 3. Gestión Gerencial
-  {
-    id: 'resumen',
-    label: 'Tablero Gerencial',
-    seccion: 'Gestión Gerencial',
-    descripcion: 'Semáforo global de portafolio, matriz BSC y alertas estratégicas.',
-    icono: 'LayoutDashboard',
-    badge: 'KPIs',
-  },
-  {
     id: 'calidad',
-    label: 'Tablero Calidad',
+    label: 'Calidad Corporativa',
     seccion: 'Gestión Gerencial',
     descripcion: 'Índice de sellos de calidad, análisis Pareto y ranking de contratistas.',
     icono: 'CheckCircle2',
   },
   {
     id: 'cto',
-    label: 'Auditoría CTO',
+    label: 'Madurez CTO (Ley 1796)',
     seccion: 'Gestión Gerencial',
-    descripcion: 'Estatus integral de las 6 categorías de interventoría y compromisos vencidos.',
+    descripcion: 'Estatus integral de las categorías de interventoría y compromisos vencidos.',
     icono: 'FileCheck',
+  },
+  {
+    id: 'resumen',
+    label: 'Portafolio Global',
+    seccion: 'Gestión Gerencial',
+    descripcion: 'Semáforo global de proyectos cargados en plataforma, matriz BSC y alertas.',
+    icono: 'LayoutDashboard',
+    badge: 'KPIs',
+  },
+  {
+    id: 'gantt-gerencial',
+    label: 'Gantt Gerencial',
+    seccion: 'Gestión Gerencial',
+    descripcion: 'Diagrama de Gantt ejecutivo consolidado.',
+    icono: 'BarChart3',
   },
   {
     id: 'productividad',
     label: 'Matriz Productividad',
     seccion: 'Gestión Gerencial',
-    descripcion: 'Cuadrantes de ritmo vs. personal (Tesla Quad) e índices de mano de obra.',
+    descripcion: 'Cuadrantes de ritmo vs. personal e índices de mano de obra.',
     icono: 'TrendingUp',
   },
   {
-    id: 'bitacora',
-    label: 'Bitácora & Riesgos',
-    seccion: 'Gestión Gerencial',
-    descripcion: 'Registro cronológico de lecciones aprendidas, reclamos y contingencias.',
-    icono: 'FileText',
-  },
-  {
-    id: 'reportes',
-    label: 'Informe Mensual',
+    id: 'reporte',
+    label: 'Ficha Aconex PDF',
     seccion: 'Gestión Gerencial',
     descripcion: 'Generador de informe ejecutivo mensual en PDF para comités directivos.',
     icono: 'Printer',
   },
 
-  // 4. Administración y Gobernanza
+  // 3. Administración y Gobernanza
   {
     id: 'usuarios',
-    label: 'Usuarios & Permisos',
+    label: 'Panel Administración',
     seccion: 'Administración',
-    descripcion: 'Gestión de directorio, cola de aprobación de cuentas y permisos por rol (estándar PETINC).',
+    descripcion: 'Aprobación de cuentas, solicitudes de asignación de proyectos y permisos por rol.',
     icono: 'UserCheck',
     badge: 'Admin',
   },
 ];
 
 export const PERMISOS_DEFAULT: MatrizPermisos = {
-  RESIDENTE_INTERVENTORIA: [
-    'residente-programacion',
-    'residente-presupuesto',
-    'residente-calidad',
-    'residente-cto',
-    'residente-productividad',
-    'wbs',
-    'tiempo',
-    'gantt-gerencial',
-    'lookahead',
-    'elevacion',
-    'bitacora'
-  ],
-  DIRECTOR_OBRA: [
-    'residente-programacion',
-    'wbs',
-    'tiempo',
-    'gantt-gerencial',
-    'lookahead',
-    'elevacion',
-    'resumen',
-    'calidad',
-    'cto',
-    'productividad',
-    'bitacora'
-  ],
-  DIRECTOR_INTERVENTORIA: [
-    'residente-programacion',
-    'residente-presupuesto',
-    'residente-calidad',
-    'residente-cto',
-    'residente-productividad',
-    'wbs',
-    'tiempo',
-    'gantt-gerencial',
-    'lookahead',
-    'elevacion',
-    'resumen',
-    'calidad',
-    'cto',
-    'productividad',
-    'bitacora',
-    'reportes',
-    'usuarios'
-  ],
-  GERENTE_INTERVENTORIA: [
-    'residente-programacion',
-    'residente-presupuesto',
-    'residente-calidad',
-    'residente-cto',
-    'residente-productividad',
-    'wbs',
-    'tiempo',
-    'gantt-gerencial',
-    'lookahead',
-    'elevacion',
-    'resumen',
-    'calidad',
-    'cto',
-    'productividad',
-    'bitacora',
-    'reportes',
-    'usuarios'
-  ],
-  DIRECTIVO: [
-    'resumen',
-    'tiempo',
-    'gantt-gerencial',
-    'calidad',
-    'cto',
-    'productividad',
-    'bitacora',
-    'reportes'
-  ],
   ADMINISTRADOR: [
-    'residente-programacion',
-    'residente-presupuesto',
+    'parametros',
+    'wbs',
+    'bitacora',
+    'residente-lookahead',
     'residente-calidad',
     'residente-cto',
-    'residente-productividad',
-    'wbs',
-    'tiempo',
-    'gantt-gerencial',
-    'lookahead',
     'elevacion',
-    'resumen',
+    'residente-presupuesto',
+    'residente-productividad',
+    'tiempo',
+    'lookahead',
     'calidad',
     'cto',
+    'resumen',
+    'gantt-gerencial',
     'productividad',
+    'reporte',
+    'usuarios',
+  ],
+  RESIDENTE_INTERVENTORIA: [
+    'parametros',
+    'wbs',
     'bitacora',
-    'reportes',
-    'usuarios'
+    'residente-lookahead',
+    'residente-calidad',
+    'residente-cto',
+    'elevacion',
+    'residente-presupuesto',
+    'residente-productividad',
+  ],
+  DIRECTOR_GERENTE_INTERVENTORIA: [
+    'resumen',
+    'tiempo',
+    'lookahead',
+    'calidad',
+    'cto',
+    'gantt-gerencial',
+    'productividad',
+    'reporte',
+  ],
+  DIRECTOR_OBRA_GERENTE_AREA: [
+    'resumen',
+    'tiempo',
+    'lookahead',
+    'calidad',
+    'cto',
+    'gantt-gerencial',
+    'productividad',
+    'reporte',
   ],
 };
 
-const STORAGE_KEY_PERMISOS = 'interventor_app_matriz_permisos';
+const STORAGE_KEY_PERMISOS = 'interventor_app_matriz_permisos_v2';
 
 export function getMatrizPermisos(): MatrizPermisos {
   try {
     const raw = localStorage.getItem(STORAGE_KEY_PERMISOS);
     if (raw) {
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      return {
+        ...PERMISOS_DEFAULT,
+        ...parsed,
+      };
     }
   } catch (e) {
     console.error('Error cargando permisos de localStorage', e);
@@ -259,4 +229,20 @@ export function puedeAccederModulo(rol: Rol, moduloId: string): boolean {
   const matriz = getMatrizPermisos();
   const permitidos = matriz[rol] || PERMISOS_DEFAULT[rol] || [];
   return permitidos.includes(moduloId);
+}
+
+export function esRolDirectivo(rol: Rol): boolean {
+  return rol === 'DIRECTOR_GERENTE_INTERVENTORIA' || rol === 'DIRECTOR_OBRA_GERENTE_AREA';
+}
+
+export function puedeOperarCampo(rol: Rol): boolean {
+  return rol === 'ADMINISTRADOR' || rol === 'RESIDENTE_INTERVENTORIA';
+}
+
+export function puedeVerGerencial(rol: Rol): boolean {
+  return (
+    rol === 'ADMINISTRADOR' ||
+    rol === 'DIRECTOR_GERENTE_INTERVENTORIA' ||
+    rol === 'DIRECTOR_OBRA_GERENTE_AREA'
+  );
 }

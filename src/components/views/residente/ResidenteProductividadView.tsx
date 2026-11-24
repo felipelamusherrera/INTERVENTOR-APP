@@ -29,67 +29,36 @@ export interface FieldProductivityLog {
   usuarioRegistro: string;
 }
 
-const STORAGE_PRODUCTIVIDAD_FIELD_KEY = 'interventor_productividad_field_v1';
+const STORAGE_PRODUCTIVIDAD_FIELD_PREFIX = 'interventor_productividad_field_v2_';
 
-export const ResidenteProductividadView: React.FC = () => {
+export const ResidenteProductividadView: React.FC<{ selectedProject?: string }> = ({
+  selectedProject = '',
+}) => {
   const [logs, setLogs] = useState<FieldProductivityLog[]>([]);
   const [syncStatus, setSyncStatus] = useState<'idle' | 'syncing' | 'synced'>('idle');
 
   // Formulario
-  const [contratista, setContratista] = useState('Estructuras del Valle S.A.S.');
-  const [frente, setFrente] = useState('Torre 1');
-  const [actividad, setActividad] = useState('Encofrado y Vaciado de Muros');
-  const [personalActivo, setPersonalActivo] = useState(14);
-  const [unidadesEjecutadas, setUnidadesEjecutadas] = useState(2);
-  const [unidadesMeta, setUnidadesMeta] = useState(2);
+  const [contratista, setContratista] = useState('');
+  const [frente, setFrente] = useState('TORRE 01');
+  const [actividad, setActividad] = useState('');
+  const [personalActivo, setPersonalActivo] = useState(0);
+  const [unidadesEjecutadas, setUnidadesEjecutadas] = useState(0);
+  const [unidadesMeta, setUnidadesMeta] = useState(0);
   const [horasPerdidas, setHorasPerdidas] = useState(0);
   const [causaParada, setCausaParada] = useState<FieldProductivityLog['causaParada']>('Ninguna');
   const [observaciones, setObservaciones] = useState('');
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_PRODUCTIVIDAD_FIELD_KEY);
-      if (saved) {
-        setLogs(JSON.parse(saved));
-        return;
-      }
+      const saved = selectedProject
+        ? localStorage.getItem(`${STORAGE_PRODUCTIVIDAD_FIELD_PREFIX}${selectedProject}`)
+        : null;
+      setLogs(saved ? JSON.parse(saved) : []);
     } catch (e) {
       console.error(e);
+      setLogs([]);
     }
-
-    const iniciales: FieldProductivityLog[] = [
-      {
-        id: 'prod-01',
-        fecha: '2026-11-09T08:00:00Z',
-        contratista: 'Estructuras del Valle S.A.S.',
-        frente: 'Torre 1',
-        actividad: 'Encofrado y Vaciado de Muros Piso 3',
-        personalActivo: 16,
-        unidadesEjecutadas: 2,
-        unidadesMeta: 2,
-        horasPerdidas: 0,
-        causaParada: 'Ninguna',
-        observaciones: 'Jornada normal, ritmo de 1 apartamento por día cumplido.',
-        usuarioRegistro: 'Carlos Mario Gómez',
-      },
-      {
-        id: 'prod-02',
-        fecha: '2026-11-08T08:00:00Z',
-        contratista: 'Mampostería San Juan',
-        frente: 'Torre 2',
-        actividad: 'Pega de Bloque Arcilla Piso 2',
-        personalActivo: 8,
-        unidadesEjecutadas: 1,
-        unidadesMeta: 2,
-        horasPerdidas: 3.5,
-        causaParada: 'Lluvia',
-        observaciones: 'Lluvia torrencial de 11:30 a 14:00 impidió transporte vertical de ladrillo.',
-        usuarioRegistro: 'Carlos Mario Gómez',
-      },
-    ];
-    setLogs(iniciales);
-    localStorage.setItem(STORAGE_PRODUCTIVIDAD_FIELD_KEY, JSON.stringify(iniciales));
-  }, []);
+  }, [selectedProject]);
 
   const handleGuardarLog = (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,12 +75,14 @@ export const ResidenteProductividadView: React.FC = () => {
       horasPerdidas,
       causaParada,
       observaciones,
-      usuarioRegistro: current.nombre,
+      usuarioRegistro: current?.nombre || 'Residente Interventoría',
     };
 
     const actualizados = [nuevo, ...logs];
     setLogs(actualizados);
-    localStorage.setItem(STORAGE_PRODUCTIVIDAD_FIELD_KEY, JSON.stringify(actualizados));
+    if (selectedProject) {
+      localStorage.setItem(`${STORAGE_PRODUCTIVIDAD_FIELD_PREFIX}${selectedProject}`, JSON.stringify(actualizados));
+    }
     setObservaciones('');
     setHorasPerdidas(0);
     setCausaParada('Ninguna');

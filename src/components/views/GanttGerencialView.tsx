@@ -20,7 +20,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { CpmEngine, CpmTask } from '../../services/cpmEngine';
-import initialWbsData from '../../data/wbsBelaterraFull.json';
+import { ScheduleService } from '../../services/scheduleService';
 
 interface GanttGerencialViewProps {
   selectedProject?: string;
@@ -47,10 +47,11 @@ export const GanttGerencialView: React.FC<GanttGerencialViewProps> = ({
   // Escala Temporal de Visualización
   const [timeZoom, setTimeZoom] = useState<'MONTHS' | 'QUARTERS' | 'YEARS'>('QUARTERS');
 
-  // 1. Cargar y procesar CPM de tareas
-  useEffect(() => {
+  // 1. Cargar y procesar CPM de tareas desde la programación centralizada
+  const cargarTareasGantt = () => {
     try {
-      const res = CpmEngine.computeSchedule(initialWbsData as any[]);
+      const activeSchedule = ScheduleService.getActiveSchedule(selectedProject);
+      const res = CpmEngine.computeSchedule(activeSchedule as any[]);
       setAllTasks(res.tasks);
 
       // Expandir por defecto los primeros 3 niveles para que el árbol se visualice ordenado
@@ -67,7 +68,21 @@ export const GanttGerencialView: React.FC<GanttGerencialViewProps> = ({
     } finally {
       setLoading(false);
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    cargarTareasGantt();
+  }, [selectedProject]);
+
+  // Escuchar actualizaciones globales de la sábana de programación
+  useEffect(() => {
+    const handleScheduleUpdated = () => {
+      cargarTareasGantt();
+    };
+
+    window.addEventListener('schedule_updated', handleScheduleUpdated);
+    return () => window.removeEventListener('schedule_updated', handleScheduleUpdated);
+  }, [selectedProject]);
 
   // Lista única de agrupaciones disponibles
   const agrupacionesDisponibles = useMemo(() => {
@@ -114,6 +129,24 @@ export const GanttGerencialView: React.FC<GanttGerencialViewProps> = ({
     return map;
   }, [tareasPermitidasPorNivel]);
 
+  // Mapa de EDT críticas propagado hacia ancestros resumen (niveles 1..6)
+  const criticalEdtSet = useMemo(() => {
+    const set = new Set<string>();
+    allTasks.forEach((t) => {
+      if (t.esCritica && t.edt) {
+        set.add(t.edt);
+        const parts = t.edt.split('.');
+        for (let i = 1; i < parts.length; i++) {
+          set.add(parts.slice(0, i).join('.'));
+        }
+      }
+    });
+    return set;
+  }, [allTasks]);
+
+  const isRowCritica = (t: CpmTask): boolean =>
+    t.esCritica || (t.type === 'project' && criticalEdtSet.has(t.edt));
+
   // 3. Filtrar según estado de colapso y búsqueda
   const visibleTasks = useMemo(() => {
     return tareasPermitidasPorNivel.filter(t => {
@@ -123,8 +156,9 @@ export const GanttGerencialView: React.FC<GanttGerencialViewProps> = ({
       }
 
       // Filtro de Criticidad
-      if (filtroCriticidad === 'CRITICAS' && !t.esCritica) return false;
-      if (filtroCriticidad === 'HOLGURA' && t.esCritica) return false;
+      const rowCrit = t.esCritica || (t.type === 'project' && criticalEdtSet.has(t.edt));
+      if (filtroCriticidad === 'CRITICAS' && !rowCrit) return false;
+      if (filtroCriticidad === 'HOLGURA' && rowCrit) return false;
 
       // Filtro de Búsqueda
       if (searchTerm) {
@@ -151,7 +185,7 @@ export const GanttGerencialView: React.FC<GanttGerencialViewProps> = ({
 
       return true;
     });
-  }, [tareasPermitidasPorNivel, filtroAgrupacion, filtroCriticidad, searchTerm, expandedNodes]);
+  }, [tareasPermitidasPorNivel, filtroAgrupacion, filtroCriticidad, searchTerm, expandedNodes, criticalEdtSet]);
 
   // 4. Cálculo de Escala Temporal (Inicio y Fin Global)
   const timelineBounds = useMemo(() => {
@@ -616,7 +650,7 @@ export const GanttGerencialView: React.FC<GanttGerencialViewProps> = ({
                             title={`${task.nombre} (${task.comien} al ${task.fin})`}
                           >
                             <div className={`w-full h-full flex flex-col justify-between ${
-                              task.esCritica ? 'bg-red-800' : 'bg-slate-700'
+                              isRowCritica(task) ? 'bg-red-800' : 'bg-slate-700'
                             }`}>
                               <div className="w-full h-1 bg-white/30" />
                               <div 

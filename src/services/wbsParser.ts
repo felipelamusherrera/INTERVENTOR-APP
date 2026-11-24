@@ -1,5 +1,23 @@
 import * as XLSX from 'xlsx';
 import { WbsItem, MacroMilestone, MajorDelay } from '../types';
+import { normalizeTorreStandard, normalizeEtapaStandard } from './projectService';
+
+export interface FechaAlistamientoTorreRecord {
+  agrupacion: string;
+  etapa: string;
+  hc?: string;
+  proyecto?: string;
+  gerente?: string;
+  alistamientoPrevisto?: string;
+  alistamientoProyectadoWp?: string;
+  alistamientoConfirmadoGerente: string;
+  aprueba?: string;
+  fechaConfirmacion?: string;
+  ingresoRph?: string;
+  salidaRph?: string;
+  banderaRph?: string;
+  alistamientoTramite?: string;
+}
 
 export interface ParsedScheduleResult {
   tasks: WbsItem[];
@@ -38,24 +56,48 @@ export function cleanTextEncoding(val: string): string {
  * Convierte fechas en formato serial de Excel o formato dd/mm/aaaa a ISO YYYY-MM-DD
  */
 export function formatScheduleDate(val: any): string {
-  if (!val) return '';
+  if (val === undefined || val === null || val === '') return '';
+  if (val instanceof Date && !isNaN(val.getTime())) {
+    return val.toISOString().split('T')[0];
+  }
   const str = String(val).trim();
+  if (!str) return '';
+  const isoMatch = str.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (isoMatch) {
+    return `${isoMatch[1]}-${isoMatch[2]}-${isoMatch[3]}`;
+  }
   if (str.includes('/')) {
     const parts = str.split('/');
     if (parts.length === 3) {
       const d = parts[0].padStart(2, '0');
       const m = parts[1].padStart(2, '0');
-      const y = parts[2];
+      const y = parts[2].length === 2 ? `20${parts[2]}` : parts[2];
       return `${y}-${m}-${d}`;
     }
   }
   const num = Number(val);
   if (!isNaN(num) && num > 30000 && num < 60000) {
-    const utcDays = num - 25569;
-    const date = new Date(Math.round(utcDays * 86400 * 1000));
+    const utcDays = Math.floor(num - 25569);
+    const date = new Date(utcDays * 86400 * 1000);
     return date.toISOString().split('T')[0];
   }
   return str;
+}
+
+/**
+ * Normaliza el avance W del Workplanner a fracción 0-1.
+ * Acepta 0.04, "4%", "4", "100%" o 1.
+ */
+export function normalizePercent(val: any): number {
+  if (val === undefined || val === null || val === '') return 0;
+  if (typeof val === 'number') {
+    return val > 1 ? val / 100 : val;
+  }
+  const str = String(val).trim();
+  const num = parseFloat(str.replace('%', '').replace(',', '.'));
+  if (isNaN(num)) return 0;
+  if (str.includes('%') || num > 1) return num / 100;
+  return num;
 }
 
 /**
@@ -79,24 +121,51 @@ export function parseScheduleExcel(data: ArrayBuffer): ParsedScheduleResult {
     const hitoStr = cleanTextEncoding(String(row.Hito || row.hito || '')).toLowerCase();
     const esHito = hitoStr === 'si' || hitoStr === 's' || row.type === 'milestone';
 
+    const pickCol = (candidates: string[]): any => {
+      const lowerKeys = Object.keys(row).reduce<Record<string, string>>((acc, k) => {
+        acc[k.trim().toLowerCase()] = k;
+        return acc;
+      }, {});
+      for (const c of candidates) {
+        const key = lowerKeys[c.toLowerCase()];
+        if (key !== undefined && row[key] !== '' && row[key] !== undefined) {
+          return row[key];
+        }
+      }
+      return '';
+    };
+
+    const comienPrevVal = formatScheduleDate(
+      pickCol(['ComienPrev', 'Comienprev', 'Comien_Prev', 'ComienzoPrev', 'Comienzo Linea Base'])
+    );
+    const finPrevVal = formatScheduleDate(
+      pickCol(['FinPrev', 'Finprev', 'Fin_Prev', 'Fin Linea Base'])
+    );
+    const comienVal = formatScheduleDate(pickCol(['Comien', 'ComienReal', 'Comienzo Real']));
+    const finVal = formatScheduleDate(pickCol(['Fin', 'FinReal', 'Fin Real']));
+
     tasks.push({
+      idConsec: Number(pickCol(['idConsec', 'IdConsec', 'ID'])) || tasks.length + 1,
       edt,
       nivel: parseInt(String(row.NivelEsquema || row.nivel || '2'), 10),
       esHito,
       nombre: cleanTextEncoding(String(row.Nombre || row.nombre || 'Sin nombre')),
-      w: isNaN(wVal) ? 0 : wVal,
-      duraPrev: parseInt(String(row.DuraPrev || row.duraPrev || '0'), 10),
+      w: normalizePercent(row.W !== undefined && row.W !== '' ? row.W : row.w),
+      duraPrev: parseInt(String(pickCol(['DuraPrev', 'Duraprev', 'Dura_Prev']) || '0'), 10),
       dura: parseInt(String(row.Dura || row.dura || '0'), 10),
-      comienPrev: formatScheduleDate(row.ComienPrev || row.comienPrev),
-      finPrev: formatScheduleDate(row.FinPrev || row.finPrev),
-      comien: formatScheduleDate(row.Comien || row.comien),
-      fin: formatScheduleDate(row.Fin || row.fin),
+      comienPrev: comienPrevVal || comienVal,
+      finPrev: finPrevVal || finVal,
+      comien: comienVal || comienPrevVal,
+      fin: finVal || finPrevVal,
       varComien: isNaN(varComienVal) ? 0 : varComienVal,
       varFin: isNaN(varFinVal) ? 0 : varFinVal,
       responsable: cleanTextEncoding(String(row.Responsable || row.responsable || '')),
       unidad: cleanTextEncoding(String(row.unidadMedida || row.unidad || '')),
       cantidad: String(row.cantidad || '0'),
       rendimiento: String(row.rendimiento || '0'),
+      predecesora: String(pickCol(['predecesora', 'Predecesora', 'Predecesoras']) || ''),
+      agrupacion: cleanTextEncoding(String(pickCol(['Agrupacion', 'agrupacion', 'Agrupación']) || '')),
+      codigoPlaneacion: String(pickCol(['codigoPlaneacion', 'CodigoPlaneacion', 'Codigo Planeacion', 'CodigoCPC']) || ''),
       tipo: String(row.type || row.tipo || 'task'),
       etapa: cleanTextEncoding(String(row.Etapa || row.etapa || ''))
     });
@@ -122,7 +191,8 @@ export function parseScheduleCsv(csvContent: string): ParsedScheduleResult {
   }
 
   const headerLine = lines[0];
-  const headers = parseCsvLine(headerLine);
+  const delimiter = (headerLine.match(/;/g) || []).length > (headerLine.match(/,/g) || []).length ? ';' : ',';
+  const headers = parseCsvLine(headerLine, delimiter);
   
   const getColIndex = (name: string): number => {
     return headers.findIndex(h => h.trim().toLowerCase() === name.toLowerCase());
@@ -147,30 +217,40 @@ export function parseScheduleCsv(csvContent: string): ParsedScheduleResult {
   const idxRend = getColIndex('rendimiento');
   const idxTipo = getColIndex('type');
   const idxEtapa = getColIndex('Etapa');
+  const idxIdConsec = getColIndex('idConsec');
+  const idxPredecesora = getColIndex('predecesora');
+  const idxAgrupacion = getColIndex('agrupacion');
+  const idxCodigoPlaneacion = getColIndex('codigoPlaneacion');
 
   const tasks: WbsItem[] = [];
 
   for (let i = 1; i < lines.length; i++) {
-    const row = parseCsvLine(lines[i]);
+    const row = parseCsvLine(lines[i], delimiter);
     if (row.length === 0 || !row[idxEdt]) continue;
 
     const varFinVal = parseInt(row[idxVarFin] || '0', 10);
     const varComienVal = parseInt(row[idxVarComien] || '0', 10);
-    const wVal = parseFloat(row[idxW] || '0');
     const hitoStr = cleanTextEncoding(row[idxHito] || '').toLowerCase();
 
+    const csvComienPrev = formatScheduleDate(row[idxComienPrev]);
+    const csvFinPrev = formatScheduleDate(row[idxFinPrev]);
+    const csvComien = formatScheduleDate(row[idxComien]);
+    const csvFin = formatScheduleDate(row[idxFin]);
+    const idConsecVal = idxIdConsec >= 0 ? parseInt(row[idxIdConsec] || '', 10) : NaN;
+
     tasks.push({
+      idConsec: isNaN(idConsecVal) ? tasks.length + 1 : idConsecVal,
       edt: cleanTextEncoding(row[idxEdt] || ''),
       nivel: parseInt(row[idxNivel] || '2', 10),
       esHito: hitoStr === 'si' || hitoStr === 's' || row[idxTipo] === 'milestone',
       nombre: cleanTextEncoding(row[idxNombre] || 'Sin nombre'),
-      w: isNaN(wVal) ? 0 : wVal,
+      w: normalizePercent(row[idxW]),
       duraPrev: parseInt(row[idxDuraPrev] || '0', 10),
       dura: parseInt(row[idxDura] || '0', 10),
-      comienPrev: formatScheduleDate(row[idxComienPrev]),
-      finPrev: formatScheduleDate(row[idxFinPrev]),
-      comien: formatScheduleDate(row[idxComien]),
-      fin: formatScheduleDate(row[idxFin]),
+      comienPrev: csvComienPrev || csvComien,
+      finPrev: csvFinPrev || csvFin,
+      comien: csvComien || csvComienPrev,
+      fin: csvFin || csvFinPrev,
       varComien: isNaN(varComienVal) ? 0 : varComienVal,
       varFin: isNaN(varFinVal) ? 0 : varFinVal,
       responsable: cleanTextEncoding(row[idxResp] || ''),
@@ -178,7 +258,10 @@ export function parseScheduleCsv(csvContent: string): ParsedScheduleResult {
       cantidad: row[idxCantidad] || '',
       rendimiento: row[idxRend] || '',
       tipo: row[idxTipo] || 'task',
-      etapa: cleanTextEncoding(row[idxEtapa] || '')
+      etapa: cleanTextEncoding(row[idxEtapa] || ''),
+      predecesora: idxPredecesora >= 0 ? row[idxPredecesora] || '' : '',
+      agrupacion: idxAgrupacion >= 0 ? cleanTextEncoding(row[idxAgrupacion] || '') : '',
+      codigoPlaneacion: idxCodigoPlaneacion >= 0 ? row[idxCodigoPlaneacion] || '' : ''
     });
   }
 
@@ -218,7 +301,7 @@ function processCalculatedMetrics(tasks: WbsItem[]): ParsedScheduleResult {
   };
 }
 
-function parseCsvLine(text: string): string[] {
+function parseCsvLine(text: string, delimiter: string = ','): string[] {
   const result: string[] = [];
   let cur = '';
   let inQuotes = false;
@@ -232,7 +315,7 @@ function parseCsvLine(text: string): string[] {
       } else {
         inQuotes = !inQuotes;
       }
-    } else if (c === ',' && !inQuotes) {
+    } else if (c === delimiter && !inQuotes) {
       result.push(cur);
       cur = '';
     } else {
@@ -241,4 +324,138 @@ function parseCsvLine(text: string): string[] {
   }
   result.push(cur);
   return result;
+}
+
+function normalizeAlistamientoHeaderKey(k: string): string {
+  return cleanTextEncoding(k)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * Parsea las filas de la plantilla "FECHAS DE ALISTAMIENTO" (Excel / CSV)
+ * extrayendo la fecha confirmada por Gerencia (`AlistamientConfirmadoGerente(C)`) por torre.
+ */
+export function parseFechasAlistamientoRows(rows: Record<string, any>[]): FechaAlistamientoTorreRecord[] {
+  const result: FechaAlistamientoTorreRecord[] = [];
+  const isoDateRe = /^\d{4}-\d{2}-\d{2}$/;
+
+  for (const row of rows) {
+    const normEntries = Object.entries(row).map(([k, v]) => ({
+      norm: normalizeAlistamientoHeaderKey(k),
+      val: v,
+    }));
+
+    const pickExactOrContains = (candidates: string[], containsAll?: string[]): any => {
+      for (const c of candidates) {
+        const hit = normEntries.find((e) => e.norm === c && e.val !== '' && e.val !== undefined && e.val !== null);
+        if (hit) return hit.val;
+      }
+      if (containsAll && containsAll.length > 0) {
+        const hit = normEntries.find(
+          (e) =>
+            containsAll.every((token) => e.norm.includes(token)) &&
+            e.val !== '' &&
+            e.val !== undefined &&
+            e.val !== null
+        );
+        if (hit) return hit.val;
+      }
+      return '';
+    };
+
+    const rawAgr = cleanTextEncoding(
+      String(
+        pickExactOrContains(
+          ['agrupacionworkplanner', 'agrupacion', 'torre'],
+          ['agrupacion']
+        ) || ''
+      )
+    );
+    if (!rawAgr) continue;
+
+    const agrupacion = normalizeTorreStandard(rawAgr) || rawAgr.toUpperCase();
+    const rawEtapa = cleanTextEncoding(
+      String(pickExactOrContains(['etapa'], ['etapa']) || '')
+    );
+    const etapa = normalizeEtapaStandard(rawEtapa) || rawEtapa.toUpperCase();
+
+    const confirmadoRaw = pickExactOrContains(
+      [
+        'alistamientconfirmadogerentec',
+        'alistamientoconfirmadogerentec',
+        'alistamientconfirmadogerente',
+        'alistamientoconfirmadogerente',
+        'confirmadogerentec',
+        'confirmadogerente',
+      ],
+      ['confirmadogerente']
+    ) || pickExactOrContains(['fechagerenciac'], ['gerente', 'c']);
+
+    const alistamientoConfirmadoGerente = formatScheduleDate(confirmadoRaw);
+    if (!isoDateRe.test(alistamientoConfirmadoGerente)) continue;
+
+    const previstoRaw = pickExactOrContains(
+      ['alistamientoprevistoa', 'alistamientoprevisto'],
+      ['previsto']
+    );
+    const proyWpRaw = pickExactOrContains(
+      ['alistamientoproyectadoworkplannerb', 'alistamientoproyectadoworkplanner'],
+      ['proyectado', 'workplanner']
+    );
+
+    const alistamientoPrevisto = formatScheduleDate(previstoRaw);
+    const alistamientoProyectadoWp = formatScheduleDate(proyWpRaw);
+
+    result.push({
+      agrupacion,
+      etapa,
+      hc: String(pickExactOrContains(['hc']) || '').trim() || undefined,
+      proyecto: cleanTextEncoding(String(pickExactOrContains(['proyecto']) || '')) || undefined,
+      gerente: cleanTextEncoding(String(pickExactOrContains(['gerente']) || '')) || undefined,
+      alistamientoPrevisto: isoDateRe.test(alistamientoPrevisto) ? alistamientoPrevisto : undefined,
+      alistamientoProyectadoWp: isoDateRe.test(alistamientoProyectadoWp) ? alistamientoProyectadoWp : undefined,
+      alistamientoConfirmadoGerente,
+      aprueba: cleanTextEncoding(String(pickExactOrContains(['aprueba']) || '')) || undefined,
+      fechaConfirmacion: (() => {
+        const d = formatScheduleDate(pickExactOrContains(['fechadeconfirmacion', 'fechaconfirmacion']));
+        return isoDateRe.test(d) ? d : undefined;
+      })(),
+      ingresoRph: (() => {
+        const d = formatScheduleDate(pickExactOrContains(['ingresorph']));
+        return isoDateRe.test(d) ? d : undefined;
+      })(),
+      salidaRph: (() => {
+        const d = formatScheduleDate(pickExactOrContains(['salidarph']));
+        return isoDateRe.test(d) ? d : undefined;
+      })(),
+      banderaRph: cleanTextEncoding(String(pickExactOrContains(['banderarph']) || '')) || undefined,
+      alistamientoTramite: (() => {
+        const d = formatScheduleDate(pickExactOrContains(['alistamientotramite']));
+        return isoDateRe.test(d) ? d : undefined;
+      })(),
+    });
+  }
+
+  return result;
+}
+
+export function parseFechasAlistamientoExcel(data: ArrayBuffer): FechaAlistamientoTorreRecord[] {
+  const workbook = XLSX.read(data, { type: 'array' });
+  const firstSheetName = workbook.SheetNames[0];
+  if (!firstSheetName) return [];
+  const worksheet = workbook.Sheets[firstSheetName];
+  const rows = XLSX.utils.sheet_to_json<Record<string, any>>(worksheet, { defval: '' });
+  return parseFechasAlistamientoRows(rows);
+}
+
+export function parseFechasAlistamientoCsv(text: string): FechaAlistamientoTorreRecord[] {
+  const workbook = XLSX.read(text, { type: 'string' });
+  const firstSheetName = workbook.SheetNames[0];
+  if (!firstSheetName) return [];
+  const worksheet = workbook.Sheets[firstSheetName];
+  const rows = XLSX.utils.sheet_to_json<Record<string, any>>(worksheet, { defval: '' });
+  return parseFechasAlistamientoRows(rows);
 }

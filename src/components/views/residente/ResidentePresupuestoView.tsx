@@ -21,7 +21,9 @@ import * as XLSX from 'xlsx';
 import { BudgetService, BudgetItem, BudgetComment, BudgetChapterSummary } from '../../../services/budgetParser';
 import { AuthService } from '../../../services/authService';
 
-export const ResidentePresupuestoView: React.FC = () => {
+export const ResidentePresupuestoView: React.FC<{ selectedProject?: string }> = ({
+  selectedProject = '',
+}) => {
   const [items, setItems] = useState<BudgetItem[]>([]);
   const [comentarios, setComentarios] = useState<BudgetComment[]>([]);
   const [activeTab, setActiveTab] = useState<'estructura' | 'comentarios'>('estructura');
@@ -32,40 +34,24 @@ export const ResidentePresupuestoView: React.FC = () => {
 
   // Modal Comentario
   const [showCommentModal, setShowCommentModal] = useState(false);
-  const [selectedCodigoCosto, setSelectedCodigoCosto] = useState('01000000');
-  const [selectedCapituloDesc, setSelectedCapituloDesc] = useState('PRELIMINARES');
+  const [selectedCodigoCosto, setSelectedCodigoCosto] = useState('');
+  const [selectedCapituloDesc, setSelectedCapituloDesc] = useState('');
   const [tipoObs, setTipoObs] = useState<BudgetComment['tipoObservacion']>('Mayor Cantidad');
   const [cuentaContable, setCuentaContable] = useState('');
   const [textoComentario, setTextoComentario] = useState('');
   const [impactoCOP, setImpactoCOP] = useState('');
 
-  // Carga inicial de datos de muestra
+  // Entorno limpio por proyecto (sin datos mock precargados)
   useEffect(() => {
-    // Generar estructura básica inicial inspirada en PIETRA E1
-    const mockItems: BudgetItem[] = [
-      { codigoCosto: '01000000', nd: 4, descripcion: 'PRELIMINARES', unidad: 'UN', cantidad: 1, valorUnitario: 17636670, valorTotal: 17636670 },
-      { codigoCosto: '01001000', nd: 5, descripcion: 'LOCALIZACION Y REPLANTEO', unidad: 'UN', cantidad: 1, valorUnitario: 17636670, valorTotal: 17636670 },
-      { codigoCosto: '01001001.1002', nd: 10, descripcion: 'PREL COMISION TOPOGRAFICA', tipo: 'T.C', unidad: 'UN', cantidad: 30, valorUnitario: 587889, valorTotal: 17636670 },
-
-      { codigoCosto: '02000000', nd: 4, descripcion: 'CIMENTACION', unidad: 'UN', cantidad: 1, valorUnitario: 467675768, valorTotal: 467675768 },
-      { codigoCosto: '02001000', nd: 5, descripcion: 'EXCAVACIONES Y RELLENOS', unidad: 'UN', cantidad: 1, valorUnitario: 17092861, valorTotal: 17092861 },
-      { codigoCosto: '02001006.1001', nd: 10, descripcion: 'CIM RELLENOS MATERIAL SELECCIONADO', tipo: 'M.O', unidad: 'M3', cantidad: 160.58, valorUnitario: 105302, valorTotal: 16909396 },
-      { codigoCosto: '02002000', nd: 5, descripcion: 'CIMENTACION SUPERFICIAL', unidad: 'UN', cantidad: 1, valorUnitario: 415020548, valorTotal: 415020548 },
-      { codigoCosto: '02002003.1001', nd: 10, descripcion: 'CIM SOLADO LOSA CIMENTACION', tipo: 'M.O', unidad: 'M2', cantidad: 455.36, valorUnitario: 27775, valorTotal: 12647706 },
-
-      { codigoCosto: '03000000', nd: 4, descripcion: 'ESTRUCTURA', unidad: 'UN', cantidad: 1, valorUnitario: 2854900000, valorTotal: 2854900000 },
-      { codigoCosto: '03001000', nd: 5, descripcion: 'MUROS Y PANTALLAS EN CONCRETO', unidad: 'UN', cantidad: 1, valorUnitario: 1650000000, valorTotal: 1650000000 },
-      { codigoCosto: '03002000', nd: 5, descripcion: 'LOSAS DE ENTREPISO', unidad: 'UN', cantidad: 1, valorUnitario: 1204900000, valorTotal: 1204900000 },
-
-      { codigoCosto: '04000000', nd: 4, descripcion: 'MAMPOSTERIA Y DIVISIONES', unidad: 'UN', cantidad: 1, valorUnitario: 450000000, valorTotal: 450000000 },
-      { codigoCosto: '05000000', nd: 4, descripcion: 'INSTALACIONES HIDRAULICAS Y SANITARIAS', unidad: 'UN', cantidad: 1, valorUnitario: 680000000, valorTotal: 680000000 },
-      { codigoCosto: '06000000', nd: 4, descripcion: 'INSTALACIONES ELECTRICAS', unidad: 'UN', cantidad: 1, valorUnitario: 590000000, valorTotal: 590000000 },
-      { codigoCosto: '07000000', nd: 4, descripcion: 'ACABADOS Y ENCHAPES', unidad: 'UN', cantidad: 1, valorUnitario: 1450000000, valorTotal: 1450000000 },
-    ];
-
-    setItems(mockItems);
-    setComentarios(BudgetService.getComentarios());
-  }, []);
+    const key = `interventor_presupuesto_items_v2_${selectedProject}`;
+    try {
+      const raw = selectedProject ? localStorage.getItem(key) : null;
+      setItems(raw ? JSON.parse(raw) : []);
+    } catch {
+      setItems([]);
+    }
+    setComentarios(BudgetService.getComentarios().filter((c: any) => !selectedProject || !c.proyecto || c.proyecto === selectedProject));
+  }, [selectedProject]);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -109,7 +95,7 @@ export const ResidentePresupuestoView: React.FC = () => {
     BudgetService.agregarComentario({
       codigoCosto: selectedCodigoCosto,
       capituloDescripcion: selectedCapituloDesc,
-      usuarioResidente: current.nombre,
+      usuarioResidente: current?.nombre || 'Residente Interventoría',
       tipoObservacion: tipoObs,
       cuentaContable: cuentaContable || undefined,
       comentario: textoComentario,

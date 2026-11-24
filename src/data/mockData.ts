@@ -15,15 +15,14 @@ import {
 } from '../types';
 
 import rawPortfolio from './portfolioData.json';
-import rawWbs from './wbsBelaterra.json';
 import rawCto from './ctoData.json';
 
 // Portfolio rows from Excel
 export const portfolioEjecucion: PortfolioItem[] = rawPortfolio.ejecucion as PortfolioItem[];
 export const portfolioEntregados: PortfolioItem[] = rawPortfolio.entregados as PortfolioItem[];
 
-// WBS items from Belaterra CSV
-export const wbsBelaterraData: WbsItem[] = rawWbs as WbsItem[];
+// WBS items (sin datos precargados pre-prueba)
+export const wbsBelaterraData: WbsItem[] = [];
 
 // 12 Macro-Hitos de Marval (Metodología Ing. Rubén Darío Ortega)
 export const macroMilestones: MacroMilestone[] = [

@@ -22,7 +22,11 @@ const STORAGE_SYNC_QUEUE_KEY = 'interventor_sp_sync_queue_v1';
 const STORAGE_SP_CONFIG_KEY = 'interventor_sp_config_v1';
 
 export const SHAREPOINT_LISTS = {
+  PROYECTOS_MAESTRO: 'Interventoria_Proyectos_Maestro',
+  SOLICITUDES_ASIGNACION: 'Interventoria_Solicitudes_Asignacion',
   PROGRAMACION: 'Interventoria_Avances_Programacion',
+  WBS_LINEA_BASE: 'Interventoria_WBS_LineasBase',
+  FECHAS_ALISTAMIENTO: 'Interventoria_Fechas_Alistamiento',
   PRESUPUESTO: 'Interventoria_Seguimiento_Presupuesto',
   CALIDAD: 'Interventoria_Inspecciones_Calidad',
   CTO: 'Interventoria_Compromisos_CTO',
@@ -31,6 +35,40 @@ export const SHAREPOINT_LISTS = {
 } as const;
 
 export class SharePointService {
+  private static daemonInitialized = false;
+
+  /**
+   * Inicializa el demonio de sincronización constante e invisible en segundo plano.
+   * Sin botones de usuario: reintenta automáticamente al reconectar o periódicamente.
+   */
+  static initBackgroundSync(): void {
+    if (this.daemonInitialized) return;
+    this.daemonInitialized = true;
+
+    if (typeof window !== 'undefined') {
+      // 1. Escuchar reconexión a Internet
+      window.addEventListener('online', () => {
+        console.log('[SharePoint AutoSync] Conexión online restablecida. Despachando cola pendiente...');
+        this.syncAll();
+      });
+
+      // 2. Intervalo periódico en background (cada 30 segundos)
+      setInterval(() => {
+        const queue = this.getQueue();
+        if (queue.length > 0 && typeof navigator !== 'undefined' && navigator.onLine) {
+          this.syncAll();
+        }
+      }, 30000);
+
+      // 3. Intento inicial diferido
+      setTimeout(() => {
+        if (typeof navigator !== 'undefined' && navigator.onLine && this.getQueue().length > 0) {
+          this.syncAll();
+        }
+      }, 2500);
+    }
+  }
+
   static getConfig(): { webhookUrl: string; fabricWorkspace: string; autoSync: boolean } {
     try {
       const data = localStorage.getItem(STORAGE_SP_CONFIG_KEY);

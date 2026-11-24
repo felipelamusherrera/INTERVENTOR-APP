@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
   ShieldCheck, 
   AlertTriangle, 
@@ -11,17 +11,32 @@ import {
   Search, 
   ChevronRight,
   ExternalLink,
-  Award
+  Award,
+  Calendar,
+  AlertCircle,
+  FileCheck2,
+  Hourglass,
+  Layers
 } from 'lucide-react';
-import { CtoCriterion, CtoTowerStatus, CtoPendingItem } from '../../types';
+import { CtoCriterion, CtoTowerStatus, CtoPendingItem, Sucursal, EstadoRevisionSupervisor } from '../../types';
 import { ctoCriteriaCatalog, ctoTowersStatus, ctoPendingItems } from '../../data/mockData';
+import { GerenciaService } from '../../services/gerenciaService';
 
 export const CtoView: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'torres' | 'criterios' | 'pendientes'>('torres');
+  const [activeTab, setActiveTab] = useState<'gerencial' | 'torres' | 'pendientes' | 'criterios'>('gerencial');
+  const [selectedMes, setSelectedMes] = useState<string>('2026-11');
+  const [filtroSucursal, setFiltroSucursal] = useState<Sucursal>('TODAS');
+
+  // Estados de Filtro de Criterios y Catálogo
   const [selectedCategory, setSelectedCategory] = useState<string>('TODAS');
   const [selectedResp, setSelectedResp] = useState<string>('TODOS');
   const [searchTerm, setSearchTerm] = useState('');
   const [criteria, setCriteria] = useState<CtoCriterion[]>(ctoCriteriaCatalog);
+
+  // Consolidado Gerencial de CTO
+  const consolidadoCto = useMemo(() => {
+    return GerenciaService.getConsolidadoCto(selectedMes, filtroSucursal);
+  }, [selectedMes, filtroSucursal]);
 
   const categories = [
     'TODAS',
@@ -64,47 +79,60 @@ export const CtoView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Top Banner */}
+      {/* Top Banner Gerencial */}
       <div className="bg-white border border-surface-border rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center space-x-2 text-emerald-600 text-xs font-bold uppercase tracking-wider mb-1">
             <ShieldCheck className="w-4 h-4" />
-            <span>Módulo 09 · Certificado Técnico de Ocupación (CTO)</span>
+            <span>Módulo 09 · Certificado Técnico de Ocupación (CTO) · Ley 1796 de 2016</span>
           </div>
-          <h2 className="text-xl font-bold text-slate-900">
-            Seguimiento Consolidado CTO (Ley 1796 de 2016 / NSR-10)
+          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <span>Tablero Gerencial de Madurez y Alistamiento CTO</span>
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+              {activeTab === 'gerencial' ? 'Visión Ejecutiva Multi-Torre' : 'Auditoría Técnica'}
+            </span>
           </h2>
           <p className="text-xs text-slate-500 mt-0.5 max-w-3xl">
-            Control documental y técnico exigido para la radicación del CTO previo a escrituración y entrega (RPH). <strong>56 Criterios / 6 Categorías Maestras</strong> con monitoreo prioritario para torres en ventana de alistamiento.
+            Control de requisitos legales para escrituración y radicación RPH: <strong>3 Fases del Supervisor Técnico</strong>, semáforo de alistamiento a 12m/6m/3m y <strong>áreas comunes esenciales obligatorias para Torre 1</strong>.
           </p>
         </div>
 
         {/* Global CTO Stats */}
-        <div className="flex items-center space-x-3 text-xs tabular-nums">
+        <div className="flex items-center space-x-3 text-xs tabular-nums self-start md:self-center">
           <div className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-center">
-            <span className="text-[10px] text-slate-400 font-semibold block uppercase">% Cumplimiento Sucursal</span>
-            <span className="text-lg font-extrabold text-emerald-700">{globalCompliance}%</span>
+            <span className="text-[10px] text-slate-400 font-semibold block uppercase">Madurez Promedio</span>
+            <span className="text-lg font-extrabold text-emerald-700">
+              {consolidadoCto.madurezPromedioPorSucursal[filtroSucursal]}%
+            </span>
           </div>
-          <div className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-center">
-            <span className="text-[10px] text-slate-400 font-semibold block uppercase">Criterios Pendientes</span>
-            <span className="text-lg font-extrabold text-amber-600">{pendingCriteria} / {totalCriteria}</span>
+          <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-center">
+            <span className="text-[10px] text-red-600 font-semibold block uppercase">Torres en Riesgo &le; 3m</span>
+            <span className="text-lg font-extrabold text-red-600">{consolidadoCto.torresEnRiesgoCritico}</span>
           </div>
-          <div className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-center">
-            <span className="text-[10px] text-slate-400 font-semibold block uppercase">Torres en Seguimiento</span>
-            <span className="text-lg font-extrabold text-blue-700">{ctoTowersStatus.length}</span>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-center">
+            <span className="text-[10px] text-blue-600 font-semibold block uppercase">Torres Auditadas</span>
+            <span className="text-lg font-extrabold text-blue-700">{consolidadoCto.torresEnSeguimiento}</span>
           </div>
         </div>
       </div>
 
-      {/* Navigation Sub-Tabs */}
+      {/* Navigation Tabs */}
       <div className="flex bg-slate-100 p-1 rounded-lg space-x-1 text-xs font-bold max-w-fit">
+        <button
+          onClick={() => setActiveTab('gerencial')}
+          className={`px-4 py-1.5 rounded-md transition ${
+            activeTab === 'gerencial' ? 'bg-white text-emerald-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          Tablero Ejecutivo Gerencial
+        </button>
         <button
           onClick={() => setActiveTab('torres')}
           className={`px-4 py-1.5 rounded-md transition ${
             activeTab === 'torres' ? 'bg-white text-emerald-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          Estado y Programación de Torres ({ctoTowersStatus.length})
+          Programación de Torres ({ctoTowersStatus.length})
         </button>
         <button
           onClick={() => setActiveTab('pendientes')}
@@ -112,7 +140,7 @@ export const CtoView: React.FC = () => {
             activeTab === 'pendientes' ? 'bg-white text-emerald-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          Matriz de Pendientes y Cuellos de Botella ({ctoPendingItems.length})
+          Cuellos de Botella ({ctoPendingItems.length})
         </button>
         <button
           onClick={() => setActiveTab('criterios')}
@@ -120,9 +148,233 @@ export const CtoView: React.FC = () => {
             activeTab === 'criterios' ? 'bg-white text-emerald-900 shadow-sm' : 'text-slate-600 hover:text-slate-900'
           }`}
         >
-          Catálogo Maestro de 56 Criterios
+          Catálogo Maestro (56 Criterios)
         </button>
       </div>
+
+      {/* TAB GERENCIAL: Consolidado Ejecutivo Multi-Proyecto */}
+      {activeTab === 'gerencial' && (
+        <div className="space-y-6">
+          {/* Barra de Filtros */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center space-x-2">
+                <Calendar className="w-4 h-4 text-slate-500" />
+                <span className="text-xs font-bold text-slate-700">Mes de Análisis:</span>
+                <select
+                  value={selectedMes}
+                  onChange={(e) => setSelectedMes(e.target.value)}
+                  className="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="2026-11">Noviembre 2026 (Mes Actual)</option>
+                  <option value="2026-10">Octubre 2026</option>
+                  <option value="2026-09">Septiembre 2026</option>
+                  <option value="ACUMULADO_2026">Acumulado Anual 2026</option>
+                </select>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Building2 className="w-4 h-4 text-slate-500" />
+                <span className="text-xs font-bold text-slate-700">Sucursal / Regional:</span>
+                <select
+                  value={filtroSucursal}
+                  onChange={(e) => setFiltroSucursal(e.target.value as Sucursal)}
+                  className="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                >
+                  <option value="TODAS">Todas las Sucursales (Nacional)</option>
+                  <option value="CALI">Sucursal Cali</option>
+                  <option value="BUCARAMANGA">Sucursal Bucaramanga</option>
+                  <option value="BOGOTA">Sucursal Bogotá</option>
+                  <option value="BARRANQUILLA">Sucursal Barranquilla</option>
+                  <option value="CARTAGENA">Sucursal Cartagena</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-2 text-xs text-slate-500">
+              <span>Alerta Alistamiento Inminente: <strong className="text-red-600">{consolidadoCto.alertasCriticasAlistamiento.length} proyectos</strong></span>
+            </div>
+          </div>
+
+          {/* 3 Fases del Supervisor Técnico (Estandarización Solicitada) */}
+          <div className="bg-white border border-surface-border rounded-xl p-5 shadow-sm space-y-4">
+            <div>
+              <h3 className="text-sm font-bold text-slate-800 flex items-center space-x-2">
+                <FileCheck2 className="w-4 h-4 text-emerald-600" />
+                <span>Estado Documental en las 3 Fases del Supervisor Técnico Independiente</span>
+              </h3>
+              <p className="text-xs text-slate-400">
+                Flujo oficial de auditoría: 1. Entrega por Ingeniería &rarr; 2. En Trámite de Revisión &rarr; 3. Aprobación Técnica Formal.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Fase 1 */}
+              <div className="p-4 rounded-xl border border-red-200 bg-red-50/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase text-red-700">Fase 1 · En Espera / Incumplimiento</span>
+                  <span className="px-2 py-0.5 rounded text-xs font-black bg-red-100 text-red-800">
+                    {consolidadoCto.distribucionFasesSupervisor['1_ENTREGA_RESPUESTA_INGENIERIA']} ítems
+                  </span>
+                </div>
+                <h4 className="font-extrabold text-sm text-red-950">
+                  Entrega / Respuesta por Ingeniería
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  El supervisor técnico ha notificado observaciones que aún no han sido radicadas o subsanadas por el equipo de obra o diseño.
+                </p>
+              </div>
+
+              {/* Fase 2 */}
+              <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase text-amber-700">Fase 2 · En Trámite</span>
+                  <span className="px-2 py-0.5 rounded text-xs font-black bg-amber-100 text-amber-800">
+                    {consolidadoCto.distribucionFasesSupervisor['2_REVISION_SUPERVISOR_PENDIENTE']} ítems
+                  </span>
+                </div>
+                <h4 className="font-extrabold text-sm text-amber-950">
+                  Revisión de Supervisor Pendiente
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Documentación radicada ante la firma de supervisión técnica externa y actualmente en proceso de validación o muestreo.
+                </p>
+              </div>
+
+              {/* Fase 3 */}
+              <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/60 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase text-emerald-700">Fase 3 · Aprobado Formal</span>
+                  <span className="px-2 py-0.5 rounded text-xs font-black bg-emerald-100 text-emerald-800">
+                    {consolidadoCto.distribucionFasesSupervisor['3_APROBACION_SUPERVISOR_TECNICO']} ítems
+                  </span>
+                </div>
+                <h4 className="font-extrabold text-sm text-emerald-950">
+                  Aprobación de Supervisor Técnico
+                </h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  Criterio con visto bueno técnico, firma del supervisor independiente y acta de inspección lista para anexar al expediente RPH.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Grilla 2 Cols: Alertas Críticas de Alistamiento por Torre + Áreas Comunes Esenciales Torre 1 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Alertas Críticas: Torres <= 3 meses con madurez < 85% */}
+            <div className="bg-white border border-surface-border rounded-xl p-5 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center space-x-2">
+                    <AlertTriangle className="w-4 h-4 text-red-600" />
+                    <span>Torres en Riesgo Inminente (&le; 3 Meses para Alistamiento)</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Torres con madurez &lt; 85% que pueden retrasar la escrituración y entrega a clientes.
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-800">
+                  Semáforo Rojo
+                </span>
+              </div>
+
+              <div className="space-y-3 pt-1">
+                {consolidadoCto.alertasCriticasAlistamiento.map((alerta, idx) => (
+                  <div key={idx} className="p-3.5 rounded-xl border border-red-200 bg-red-50/40 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <strong className="text-slate-900 text-xs font-bold block">{alerta.proyecto}</strong>
+                        <span className="text-[11px] text-red-700 font-semibold">{alerta.torre} ({alerta.sucursal})</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-black bg-red-600 text-white">
+                          Faltan {alerta.mesesParaAlistamiento} meses
+                        </span>
+                        <span className="block text-[10px] text-slate-500 mt-0.5">Madurez: {alerta.indiceMadurez}%</span>
+                      </div>
+                    </div>
+
+                    <div className="text-[11px] text-slate-600 bg-white p-2 rounded-lg border border-red-100 space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span>Ítems críticos sin resolver: <strong className="text-red-700">{alerta.itemsCriticosPendientes}</strong></span>
+                      </div>
+                      <div>
+                        <span className="text-[10px] text-slate-400">Responsables causantes:</span>
+                        <div className="flex flex-wrap gap-1 mt-0.5">
+                          {alerta.responsablesIncumplimiento.map((r, i) => (
+                            <span key={i} className="px-1.5 py-0.2 rounded bg-slate-100 text-slate-700 text-[9px] font-bold">
+                              {r}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Áreas Comunes Esenciales de Torre 1 (Regla Ley 1796) */}
+            <div className="bg-white border border-surface-border rounded-xl p-5 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center space-x-2">
+                    <Building2 className="w-4 h-4 text-blue-600" />
+                    <span>Áreas Comunes Esenciales Obligatorias (Torre 1)</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">
+                    Sistemas vitales que deben estar 100% operativos para expedir el primer CTO del conjunto.
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800">
+                  Ley 1796
+                </span>
+              </div>
+
+              <div className="space-y-2.5 pt-1 overflow-y-auto max-h-[380px] pr-1">
+                {consolidadoCto.zonasComunesTorre1.map((item, idx) => {
+                  const isBloqueante = item.estado === 'BLOQUEANTE';
+                  const isDone = item.estado === 'COMPLETADO';
+
+                  return (
+                    <div 
+                      key={idx} 
+                      className={`p-3 rounded-xl border text-xs space-y-1.5 ${
+                        isBloqueante
+                          ? 'border-red-200 bg-red-50/50'
+                          : isDone
+                          ? 'border-emerald-200 bg-emerald-50/50'
+                          : 'border-slate-200 bg-slate-50/50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <strong className="text-slate-900 font-bold">{item.zonaComun}</strong>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-black ${
+                          isBloqueante ? 'bg-red-600 text-white' : isDone ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'
+                        }`}>
+                          {item.estado}
+                        </span>
+                      </div>
+
+                      <div className="w-full bg-slate-200 rounded-full h-1.5">
+                        <div 
+                          className={`h-1.5 rounded-full ${isBloqueante ? 'bg-red-500' : isDone ? 'bg-emerald-500' : 'bg-amber-500'}`}
+                          style={{ width: `${item.avancePct}%` }}
+                        ></div>
+                      </div>
+
+                      <div className="flex items-center justify-between text-[11px] text-slate-500">
+                        <span>Avance certificación: <strong>{item.avancePct}%</strong></span>
+                        <span className="text-[10px] text-slate-400">{item.impactoTorre1}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: Estado y Programación de Torres */}
       {activeTab === 'torres' && (
@@ -286,7 +538,6 @@ export const CtoView: React.FC = () => {
       {/* TAB 3: Catálogo Maestro de 56 Criterios */}
       {activeTab === 'criterios' && (
         <div className="space-y-4">
-          {/* Filter Bar */}
           <div className="bg-white border border-surface-border rounded-xl p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
             <div className="flex flex-wrap items-center gap-2">
               <div className="relative">
@@ -326,7 +577,6 @@ export const CtoView: React.FC = () => {
             </span>
           </div>
 
-          {/* Criteria Table */}
           <div className="bg-white border border-surface-border rounded-xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">

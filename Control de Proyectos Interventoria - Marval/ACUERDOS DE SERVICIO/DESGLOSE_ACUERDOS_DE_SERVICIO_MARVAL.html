@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Desglose Ejecutivo de Acuerdos de Servicio (SLA) - Marval S.A.S.</title>
+  <style>
+    @page {
+      size: letter portrait;
+      margin: 16mm 14mm 16mm 14mm;
+
+      @bottom-right {
+        content: counter(page);
+      }
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      color: #1e293b;
+      line-height: 1.45;
+      font-size: 10pt;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header-table {
+      width: 100%;
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
+    }
+
+    .logo-title {
+      font-size: 18pt;
+      font-weight: 900;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 7.5pt;
+      font-weight: 700;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .badge-primary {
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+    }
+
+    .badge-success {
+      background-color: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge-warning {
+      background-color: #fffbeb;
+      color: #b45309;
+      border: 1px solid #fde68a;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #0f172a;
+      margin-top: 14px;
+      margin-bottom: 6px;
+      font-weight: 800;
+    }
+
+    h2 {
+      font-size: 12pt;
+      border-left: 4px solid #2563eb;
+      padding-left: 8px;
+      margin-top: 18px;
+    }
+
+    h3 {
+      font-size: 10.5pt;
+      color: #334155;
+      margin-top: 12px;
+    }
+
+    p {
+      margin: 0 0 8px 0;
+    }
+
+    .timeline-container {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 10px 0 14px 0;
+    }
+
+    .timeline-step {
+      display: inline-block;
+      width: 13.5%;
+      vertical-align: top;
+      text-align: center;
+      position: relative;
+    }
+
+    .step-days {
+      font-size: 11pt;
+      font-weight: 900;
+      color: #2563eb;
+      background: #ffffff;
+      border: 2px solid #2563eb;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      line-height: 26px;
+      margin: 0 auto 4px auto;
+    }
+
+    .step-title {
+      font-size: 7.5pt;
+      font-weight: 800;
+      color: #0f172a;
+      text-transform: uppercase;
+      line-height: 1.2;
+      margin-bottom: 3px;
+    }
+
+    .step-desc {
+      font-size: 7pt;
+      color: #64748b;
+      line-height: 1.15;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 14px 0;
+      font-size: 8.5pt;
+    }
+
+    th,
+    td {
+      border: 1px solid #cbd5e1;
+      padding: 5px 7px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+
+    .callout {
+      background-color: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 8px 10px;
+      border-radius: 0 6px 6px 0;
+      margin: 10px 0;
+      font-size: 9pt;
+    }
+
+    .callout-title {
+      font-weight: 800;
+      color: #1e40af;
+      margin-bottom: 3px;
+    }
+
+    .summary-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 8px 12px;
+      margin: 10px 0;
+    }
+
+    .page-break {
+      page-break-before: always;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <table class="header-table">
+    <tr>
+      <td>
+        <span class="badge badge-primary">Supervisión e Interventoría de Obra</span>
+        <h1 class="logo-title">MARVAL S.A.S. · ACUERDOS DE SERVICIO (SLA)</h1>
+        <p style="font-size: 8.5pt; color: #64748b; margin: 0;">
+          Manual Oficial Actualizado: Tiempos de Contratación (Todo Costo vs. Mano de Obra), Plataforma Inventory y
+          Tiempos de Bitácora
+        </p>
+      </td>
+      <td style="text-align: right; vertical-align: bottom;">
+        <span class="badge badge-success">V2.0 Actualizado</span><br>
+        <span style="font-size: 8pt; color: #64748b;">Fecha: Noviembre 2026<br>Ref: Operación Nacional / Marval</span>
+      </td>
+    </tr>
+  </table>
+
+  <!-- INTRODUCCIÓN -->
+  <div class="callout">
+    <div class="callout-title">Reglas de Oro del Acuerdo de Servicio para la Interventoría</div>
+    Los Acuerdos de Servicio (SLA) establecen el <strong>Lead Time obligatorio</strong> para que contratos, materiales y
+    maquinaria no bloqueen la <strong>Ruta Crítica</strong>. Si un SLA se vulnera, el residente debe registrar un plan
+    de acción en la <strong>Bitácora Semanal</strong> a más tardar <strong>1 semana después</strong>; si la actividad
+    crítica ya venció su fecha de inicio programada, el plan de acción con nueva fecha de compromiso debe emitirse en
+    máximo <strong>3 días</strong>.
+  </div>
+
+  <!-- SECCIÓN 1: TIEMPOS DE CONTRATACIÓN -->
+  <h2>1. Acuerdo de Servicio de Contratación: Todo Costo vs. Mano de Obra</h2>
+  <p>
+    En Marval, el tiempo de contratación varía sustancialmente según la modalidad contractual:
+  </p>
+
+  <div class="summary-box">
+    <table style="margin: 0; border: none;">
+      <tr style="background: transparent;">
+        <td style="border: none; width: 50%;">
+          <strong style="color: #1e3a8a; font-size: 10pt;">CONTRATOS TODO COSTO: 64 DÍAS TOTALES</strong><br>
+          • <strong>Fabricación:</strong> 9 días.<br>
+          • <strong>Licitación:</strong> 40 días (Revisión, Recepción, Cuadro, CPC, Comité, Gerencia).<br>
+          • <strong>Legalización:</strong> 15 días (Cierre formal y firma de Anexo 4).<br>
+          <em style="color: #64748b; font-size: 8pt;">+ 15 días de colchón para registro SST/documentación previo a
+            ingreso.</em>
+        </td>
+        <td style="border: none; width: 50%;">
+          <strong style="color: #047857; font-size: 10pt;">CONTRATOS MANO DE OBRA (LISTA DE PRECIOS): 22
+            DÍAS</strong><br>
+          • <strong>Fabricación / Preparación FCA:</strong> 7 días (Responsable FCA).<br>
+          • <strong>Legalización Contratista:</strong> 15 días (Responsable Contratista).<br>
+          <em style="color: #64748b; font-size: 8pt;">+ 15 días de colchón para registro SST/documentación previo a
+            ingreso.</em>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>Desglose de la Etapa de Licitación para Todo Costo (40 Días)</h3>
+  <div class="timeline-container">
+    <div class="timeline-step">
+      <div class="step-days">2d</div>
+      <div class="step-title">1. Revisión</div>
+      <div class="step-desc">Checklist, Anexo 4, fechas, planos, presup.</div>
+    </div>
+    <div class="timeline-step">
+      <div class="step-days">10d</div>
+      <div class="step-title">2. Propuestas</div>
+      <div class="step-desc">Visita obra/apto modelo, aclaraciones, cotizaciones.</div>
+    </div>
+    <div class="timeline-step">
+      <div class="step-days">20d</div>
+      <div class="step-title">3. Cuadro Comp.</div>
+      <div class="step-desc">Montaje comparativo, indicadores, socialización.</div>
+    </div>
+    <div class="timeline-step">
+      <div class="step-days">2d</div>
+      <div class="step-title">4. Revisión CPC</div>
+      <div class="step-desc">Aprobación Dirección Control de Proyectos.</div>
+    </div>
+    <div class="timeline-step">
+      <div class="step-days">3d</div>
+      <div class="step-title">5. Comité Qntrl</div>
+      <div class="step-desc">Avance Qntrl: Compras, FCA y Gerentes.</div>
+    </div>
+    <div class="timeline-step">
+      <div class="step-days">1d</div>
+      <div class="step-title">6. Gerencia</div>
+      <div class="step-desc">Visto bueno final Gerencia de Compras.</div>
+    </div>
+    <div class="timeline-step">
+      <div class="step-days">2d</div>
+      <div class="step-title">7. Formalización</div>
+      <div class="step-desc">Firma Anexo 4 y cierre de negocio.</div>
+    </div>
+  </div>
+
+  <div class="callout" style="background-color: #fffbeb; border-left-color: #f59e0b;">
+    <div class="callout-title" style="color: #b45309;">Mitigación de Riesgo: Ventana de 15 Días para Seguridad y Salud
+      (SST)</div>
+    Aun legalizado el contrato, se debe garantizar un tiempo de <strong>15 días posteriores a la legalización</strong>
+    para que el contratista complete el registro del personal ante el área de Seguridad y Salud en el Trabajo de Marval
+    (pagos de seguridad social, afiliaciones, inducción y permisos de trabajo en alturas/confinados). Si el personal no
+    puede ingresar en la fecha programada por este trámite, el residente registra la causa: <strong>"Falta de personal /
+      Contratista"</strong>.
+  </div>
+
+  <!-- SECCIÓN 2: COMPRA DE MATERIALES -->
+  <div class="page-break"></div>
+  <!-- SECCIÓN 2: COMPRA DE MATERIALES -->
+  <h2>2. Compra de Materiales: Plataforma Inventory y Estándar de Materiales</h2>
+  <div class="callout" style="background-color: #f0fdf4; border-left: 4px solid #16a34a;">
+    <div class="callout-title" style="color: #166534;">Unificación Técnica de Compras y las 6 Etapas de Materiales en Lookahead</div>
+    En la metodología de Lookahead y control de compuertas de arranque de obra, la compuerta de <strong>Compras</strong> y las <strong>6 Etapas de Materiales (Plataforma Inventory)</strong> constituyen <strong>exactamente la misma restricción técnica</strong>. No son conceptos separados ni independientes: los materiales son la condición física restrictiva indispensable para ejecutar las actividades evaluadas en el Lookahead.<br><br>
+    Cada insumo se articula mediante dos hitos macro fundamentales:
+    <ul style="margin: 4px 0 0 16px; padding: 0;">
+      <li><strong>Hito Macro Desencadenante (Trigger de Solicitud):</strong> Evento de avance físico en el que el residente de obra y compras deben montar y tramitar la orden de compra en la plataforma <em>Inventory</em> respetando el lead time del proveedor.</li>
+      <li><strong>Hito Macro Restringido de Inicio:</strong> Hito sucesor y actividades de la EDT Workplanner cuya fecha de inicio queda <strong>bloqueada (compuerta en rojo)</strong> si el suministro no se encuentra físicamente en obra y liberado por interventoría al menos <strong>15 días antes</strong> de su arranque.</li>
+    </ul>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 6%;">Etapa</th>
+        <th style="width: 17%;">Material a Solicitar (Columna MATERIAL)</th>
+        <th style="width: 17%;">Criterio de Solicitud Literal</th>
+        <th style="width: 12%;">Hito Desencadenante (Trigger)</th>
+        <th style="width: 13%;">Hito Restringido de Inicio</th>
+        <th style="width: 19%;">Actividades Workplanner Restringidas (EDT)</th>
+        <th style="width: 16%;">Capítulo Presupuesto Opus</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- ETAPA 0 -->
+      <tr>
+        <td rowspan="4"><strong>ETAPA 0</strong></td>
+        <td>
+          • REJA PERIMETRAL - CERRAMIENTO<br>
+          • CONTENEDORES ALMACEN - ESTANTERIA
+        </td>
+        <td rowspan="4">
+          <strong>INICIO DE PROYECTO</strong><br>
+          <em style="font-size: 7.5pt; color: #64748b;">(Se deben organizar espacios acordados entre Director, Residente Logístico, grúas, almacenes y patios).</em>
+        </td>
+        <td rowspan="4">
+          <span class="badge badge-primary">URBANISMO</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Preliminares e Inicio de Obra</span>
+        </td>
+        <td>
+          <span class="badge badge-warning">URBANISMO</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Cerramiento y Campamento</span>
+        </td>
+        <td>
+          • 1.7.1.2.1.6 Cerramiento provisional<br>
+          • 1.7.1.2.1.7 Campamento y almacén
+        </td>
+        <td>01000000 PRELIMINARES</td>
+      </tr>
+      <tr>
+        <td>• ACERO CIMENTACION PROFUNDA (Hierro PR-60 figurado)</td>
+        <td>
+          <span class="badge badge-danger">CIMENTACION</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Pilotaje y Cimentación</span>
+        </td>
+        <td>• 1.7.1.3.1.2.1.1 Pilotaje torre</td>
+        <td>02000000 CIMENTACION</td>
+      </tr>
+      <tr>
+        <td>• ACERO CIMENTACION SUPERFICIAL (Se pide el 100% cimentación)</td>
+        <td>
+          <span class="badge badge-danger">CIMENTACION</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Vigas y Zapatas</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.2.1.2.1 T1 CIM Fundida vigas<br>
+          • 1.7.1.3.1.2.1.4.1 T1 Antepiso
+        </td>
+        <td>02000000 CIMENTACION (Hierro 273006 / Malla 274329)</td>
+      </tr>
+      <tr>
+        <td>• PVC (Tubería provisional de acueducto y conexiones)</td>
+        <td>
+          <span class="badge badge-warning">URBANISMO</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Servicios Provisionales</span>
+        </td>
+        <td>• 1.7.1.2.1.3 Provisional de agua</td>
+        <td>01000000 PRELIMINARES</td>
+      </tr>
+
+      <!-- ETAPA 1 -->
+      <tr>
+        <td rowspan="4"><strong>ETAPA 1</strong></td>
+        <td>
+          • HIERRO FIGURADO - MALLA ELECTROSOLDADA<br>
+          <em style="font-size: 7.5pt; color: #64748b;">(Montaje pedidos cada 2 a 5 pisos programados)</em>
+        </td>
+        <td rowspan="4">
+          • <strong>Cimentación profunda:</strong> Al adjudicarse contrato pilotaje.<br>
+          • <strong>Cimentación superficial:</strong> Al adjudicarse contrato movimiento de tierras.<br>
+          <em style="font-size: 7.5pt; color: #64748b;">(Torres consecutivas: al iniciar estructura 1er apto anterior).</em>
+        </td>
+        <td rowspan="4">
+          <span class="badge badge-primary">CIMENTACION</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Movimiento Tierras / Pilotaje</span>
+        </td>
+        <td>
+          <span class="badge badge-danger">ESTRUCTURA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Muros y Losas Torre</span>
+        </td>
+        <td>• 1.7.1.3.1.4.1.1 T1 EST Muro placa P1-P12</td>
+        <td>06000000 ESTRUCTURA (Acero 273006 / Concreto 192040)</td>
+      </tr>
+      <tr>
+        <td>
+          • TUBERIA PVC SANITARIA Y VENTILACION<br>
+          • TUBERIA PVC PRESION (Muro-placa-arañas, 50% torre)
+        </td>
+        <td>
+          <span class="badge badge-danger">ESTRUCTURA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Pases Embebidos Estructura</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.4.1.1 T1 EST Muro placa P1-P12<br>
+          • 1.7.1.3.1.11.1 T1 RED HIDRAULICA<br>
+          • 1.7.1.3.1.11.2 T1 RED SANITARIA
+        </td>
+        <td>11000000 INSTAL HIDRAULICA-SANITAR (PVC 472100 / 471060)</td>
+      </tr>
+      <tr>
+        <td>• TUBERIAS HG - VALVULAS - ACCESORIOS RCI</td>
+        <td>
+          <span class="badge badge-warning">REDES_HIDROSANITARIAS</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Montantes Verticales RCI</span>
+        </td>
+        <td>• 1.7.1.3.1.11.4 T1 RED CONTRA INCENDIO</td>
+        <td>11000000 INSTAL HIDRAULICA-SANITAR</td>
+      </tr>
+      <tr>
+        <td>• TUBERIA NOVAFORT - PEAD ALCANTARILLADO</td>
+        <td>
+          <span class="badge badge-primary">URBANISMO</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Redes Externas Matriz</span>
+        </td>
+        <td>• 1.7.1.2.6.3 Red Ppal Inst tuberia alcantarillado</td>
+        <td>11000000 REDES EXTERNAS</td>
+      </tr>
+
+      <!-- ETAPA 2 -->
+      <tr>
+        <td rowspan="4"><strong>ETAPA 2</strong></td>
+        <td>
+          • LADRILLO / BLOQUE DE ARCILLA Y CEMENTO<br>
+          <em style="font-size: 7.5pt; color: #64748b;">(Se debe tener espacio de almacenamiento bajo techo)</em>
+        </td>
+        <td rowspan="4">
+          <strong>"Se deben solicitar cuando se funda el primer m³ de cimentación superficial."</strong>
+        </td>
+        <td rowspan="4">
+          <span class="badge badge-primary">CIMENTACION</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Fundida 1er m³ Cimentación</span>
+        </td>
+        <td>
+          <span class="badge badge-danger">MAMPOSTERIA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Muros y Divisiones</span>
+        </td>
+        <td>• 1.7.1.3.1.6.1 T1 MUROS DRYWALL / MAMPOSTERIA</td>
+        <td>04000000 MAMPOSTERIA</td>
+      </tr>
+      <tr>
+        <td>• ENCHAPES, PISOS PORCELANATO 60x60, CENEFAS</td>
+        <td>
+          <span class="badge badge-danger">ACABADOS_OBRA_BLANCA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Pisos y Enchapes Aptos</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.9.1 T1 PISOS APTOS<br>
+          • 1.7.1.3.1.10.1 T1 ENCHAPES APTOS
+        </td>
+        <td>09000000 PISOS (Porcelanato 381923) / 10000000 ENCHAPES</td>
+      </tr>
+      <tr>
+        <td>• GRIFERIAS DE INCRUSTAR EN PARED (Ducha / cocina)</td>
+        <td>
+          <span class="badge badge-warning">MAMPOSTERIA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Cierre Muros Zonas Húmedas</span>
+        </td>
+        <td>• 1.7.1.3.1.11.1 T1 Red hidraulica empotrada en muro</td>
+        <td>11000000 INSTAL HIDRAULICA-SANITAR (Grifería 261414)</td>
+      </tr>
+      <tr>
+        <td>
+          • APARATOS SANITARIOS PROYECTOS VIS<br>
+          • HIERRO FIGURADO Y MALLA TANQUE RCI
+        </td>
+        <td>
+          <span class="badge badge-danger">ACABADOS_OBRA_BLANCA</span> / <span class="badge badge-warning">ZONAS_COMUNES</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Dotación Baños y Tanques</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.11.2 T1 Red sanitaria / aparatos VIS<br>
+          • 1.7.1.2.5 Tanque de reserva RCI y potable
+        </td>
+        <td>13000000 APARATOS SANITARIOS / 02000000 CIMENTACION URB</td>
+      </tr>
+
+      <!-- ETAPA 3 -->
+      <tr>
+        <td rowspan="4"><strong>ETAPA 3</strong></td>
+        <td>• CEMENTO GRIS (151001) Y ARENA (71033) PEGA REVOQUE</td>
+        <td rowspan="4">
+          <strong>"Se deben solicitar cuando se funda la estructura del primer apartamento (P1-P3)."</strong>
+        </td>
+        <td rowspan="4">
+          <span class="badge badge-primary">ESTRUCTURA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Estructura Apto 1 (P1-P3)</span>
+        </td>
+        <td>
+          <span class="badge badge-danger">ACABADOS_OBRA_GRIS</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Pañetes y Frisos</span>
+        </td>
+        <td>• 1.7.1.3.1.7.1 T1 FRISO APTOS</td>
+        <td>05000000 PAÑETES (Cemento 151001, Arena 71033)</td>
+      </tr>
+      <tr>
+        <td>• PEGANTE CERAMICO / PORCELANATO (61246) Y BOQUILLAS</td>
+        <td>
+          <span class="badge badge-danger">ACABADOS_OBRA_BLANCA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Instalación Pisos Aptos</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.9.1 T1 PISOS APTOS<br>
+          • 1.7.1.3.1.10.1 T1 ENCHAPES APTOS
+        </td>
+        <td>09000000 PISOS / 10000000 ENCHAPES (Pegante 61246)</td>
+      </tr>
+      <tr>
+        <td>• APARATOS SANITARIOS PROYECTOS NO VIS</td>
+        <td>
+          <span class="badge badge-danger">ACABADOS_OBRA_BLANCA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Instalación Aparatos No VIS</span>
+        </td>
+        <td>• 1.7.1.3.1.11.2 T1 Aparatos sanitarios no VIS</td>
+        <td>13000000 APARATOS SANITARIOS (Smart 101392 / Fussion 102024)</td>
+      </tr>
+      <tr>
+        <td>
+          • ENCHAPES Y PISOS PUNTOS FIJOS Y ESCALERAS<br>
+          • PUERTAS DE MADERA (14208 / 14201)
+        </td>
+        <td>
+          <span class="badge badge-warning">ZONAS_COMUNES</span> / <span class="badge badge-danger">CARPINTERIAS</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Rutas Evacuación y Acceso Aptos</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.9.2 T1 PISOS PTO FIJO<br>
+          • 1.7.1.3.1.9.3 T1 PISOS ESCALERA<br>
+          • 1.7.1.3.1.14.2 T1 Puertas madera ppal / alcobas
+        </td>
+        <td>09000000 PISOS / 14000000 CARPINTERIA MADERA (Puertas 14208)</td>
+      </tr>
+
+      <!-- ETAPA 4 -->
+      <tr>
+        <td rowspan="3"><strong>ETAPA 4</strong></td>
+        <td>• ACCESORIOS DE BAÑOS (Jaboneras, toalleros, llave lavadora)</td>
+        <td rowspan="3">
+          <strong>"Se deben solicitar cuando se inicie la mampostería del primer apartamento."</strong>
+        </td>
+        <td rowspan="3">
+          <span class="badge badge-primary">MAMPOSTERIA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Inicio Muros Apto 1</span>
+        </td>
+        <td>
+          <span class="badge badge-danger">ACABADOS_OBRA_BLANCA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Remates Baños y Zonas Húmedas</span>
+        </td>
+        <td>• 1.7.1.3.1.11.2 T1 Inst accesorios de baño</td>
+        <td>13000000 APARATOS Y ACCESORIOS</td>
+      </tr>
+      <tr>
+        <td>• LAVADEROS EN FIBRA / GRANITO Y CAJAS LAVADORA</td>
+        <td>
+          <span class="badge badge-danger">ACABADOS_OBRA_BLANCA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Zonas de Ropas Aptos</span>
+        </td>
+        <td>• 1.7.1.3.1.14.5 T1 Inst lavaderos y cajas lavadora</td>
+        <td>13000000 APARATOS SANITARIOS</td>
+      </tr>
+      <tr>
+        <td>
+          • CEMENTO Y ARENA PARA MORTERO AFINADO DE PISOS<br>
+          • PRODUCTO IMPORTADO (Juegos infantiles, jacuzzis)
+        </td>
+        <td>
+          <span class="badge badge-danger">ACABADOS_OBRA_GRIS</span> / <span class="badge badge-warning">ZONAS_COMUNES</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Afinado de Pisos y Recreación</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.9.1 T1 Morteros piso afinado<br>
+          • 1.7.1.2.7 Urbanismo zonas verdes y recreativas
+        </td>
+        <td>05000000 PAÑETES / 20000000 VARIOS URBANISMO</td>
+      </tr>
+
+      <!-- ETAPA 5 -->
+      <tr>
+        <td rowspan="4"><strong>ETAPA 5</strong></td>
+        <td>• GASODOMESTICOS (Estufa Challenger 9150EL, Horno HG-2540, Campana)</td>
+        <td rowspan="4">
+          <strong>"Se deben solicitar cuando se inicie pisos y enchapes del primer apartamento."</strong>
+        </td>
+        <td rowspan="4">
+          <span class="badge badge-primary">ACABADOS_OBRA_BLANCA</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Inicio Pisos / Enchapes Apto 1</span>
+        </td>
+        <td>
+          <span class="badge badge-danger">CIERRE_ENTREGAS</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Pruebas de Gas y Entrega Propietarios</span>
+        </td>
+        <td>• 1.7.1.3.1.16 T1 Gasodomésticos</td>
+        <td>16000000 APARATOS Y EQUIPOS (91019 Estufa / 91066 Horno)</td>
+      </tr>
+      <tr>
+        <td>• CERRADURAS PLYMOUTH (162052) PRINCIPAL, ALCOBAS, BAÑOS</td>
+        <td>
+          <span class="badge badge-danger">CARPINTERIAS</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Cierre Puertas de Madera</span>
+        </td>
+        <td>• 1.7.1.3.1.14.2 T1 Cerraduras puertas de madera</td>
+        <td>14000000 CARPINTERIA MADERA (Cerraduras 162052)</td>
+      </tr>
+      <tr>
+        <td>• MESON ACERO INOX / GRANITO (70497) Y LAVAPLATOS (92026)</td>
+        <td>
+          <span class="badge badge-danger">CARPINTERIAS</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Cocinas Integrales</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.16.1 T1 Mesones cocina y baño<br>
+          • 1.7.1.3.1.14.8 T1 Muebles de cocina
+        </td>
+        <td>16000000 APARATOS Y EQUIPOS (Mesón 70497 / Lavaplatos 92026)</td>
+      </tr>
+      <tr>
+        <td>
+          • GABINETE CONTRA INCENDIO DOTADO (Requisito CTO Ley 1796)<br>
+          • PUERTAS CORTAFUEGO METALICAS CON BARRA ANTIPANICO (15204)
+        </td>
+        <td>
+          <span class="badge badge-danger">ZONAS_COMUNES_ESENCIALES</span><br>
+          <span style="font-size: 7.5pt; color: #475569;">Radicación CTO Curaduría / Bomberos</span>
+        </td>
+        <td>
+          • 1.7.1.3.1.11.4 T1 Red RCI y gabinetes dotados<br>
+          • 1.7.1.2.4.8.1.1 Inst puerta cortafuego escaleras
+        </td>
+        <td>11000000 RCI / 15000000 CARPINTERIA METALICA (Puerta 15204)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECCIÓN 3: EQUIPOS Y FORMALETA -->
+  <h2>3. Equipos, Maquinaria y Formaleta: Plataformas Qntrl y JDE</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 24%;">Equipo / Maquinaria</th>
+        <th style="width: 18%;">Tipo de Recurso</th>
+        <th style="width: 18%;">Herramienta</th>
+        <th style="width: 40%;">Criterio y Momento de Solicitud</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Torre Grúa & Bomba Estacionaria</strong></td>
+        <td>Equipo Pesado</td>
+        <td>WorkPlanner</td>
+        <td>Actividad con duración y predecesoras en WorkPlanner. Cimentación de grúa lista antes del montaje.</td>
+      </tr>
+      <tr>
+        <td><strong>Formaleta Menor</strong> (Cimientos / Tanques)</td>
+        <td>Formaleta Menor</td>
+        <td>Qntrl</td>
+        <td>Se solicita al <strong>inicio del proyecto</strong> vía Qntrl con diseños estructurales y especificaciones.
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Formaleta Mayor</strong> (Muros y Placas Torre)</td>
+        <td>Formaleta Mayor</td>
+        <td>Qntrl</td>
+        <td>Se debe solicitar <strong>cuando inicie la cimentación profunda o movimiento de tierras</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Andamios Colgantes</strong> (Equipos de Resane)</td>
+        <td>Equipo Alquilado</td>
+        <td>Qntrl</td>
+        <td>• Etapa 3: Al fundir la <strong>cimentación superficial</strong>.<br>• Etapa 4: Al fundir la
+          <strong>estructura del primer apto</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Elevadores de Carga</strong></td>
+        <td>Equipo Pesado</td>
+        <td>Qntrl</td>
+        <td>Coordinar solicitud para montaje una vez la estructura alcance la cota de abastecimiento vertical.</td>
+      </tr>
+      <tr>
+        <td><strong>Equipos Menores</strong> (Martillos, Vibro 3T)</td>
+        <td>Propio / Alquilado</td>
+        <td>JDE (Lista Precios)</td>
+        <td>Montaje directo en JDE bajo lista de precios preacordada corporativa.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECCIÓN 4: REGLAS DE BITÁCORA PARA PLANES DE ACCIÓN -->
+  <h2>4. Protocolo de Tiempos para Planes de Acción en la Bitácora</h2>
+  <div class="summary-box">
+    <ul style="margin: 0; padding-left: 18px; font-size: 8.5pt;">
+      <li style="margin-bottom: 5px;">
+        <strong>Incumplimiento de Acuerdo de Servicio (Lookahead Preventivo):</strong> El residente debe registrar el
+        plan de acción en la Bitácora Semanal a más tardar <strong>1 semana (7 días)</strong> después de detectarse el
+        retraso en la gestión de compras, contratos o equipos.
+      </li>
+      <li style="margin-bottom: 5px;">
+        <strong>Incumplimiento de Inicio en Ruta Crítica (Atraso Materializado):</strong> Si la fecha de inicio
+        programada en la Línea Base ya venció y la actividad pertenece a la Ruta Crítica ($TF \le 0$), el residente debe
+        emitir el plan de acción formal en un plazo máximo de <strong>3 días</strong> después de la fecha de inicio,
+        estableciendo la <strong>nueva fecha de compromiso</strong> obligatoria.
+      </li>
+      <li>
+        <strong>Liberación de Restricciones:</strong> La restricción se da por superada exclusivamente cuando el
+        residente de interventoría ingresa la <strong>fecha de cierre real</strong> en la plataforma tras verificar el
+        cumplimiento físico en obra.
+      </li>
+    </ul>
+  </div>
+
+</body>
+
+</html>

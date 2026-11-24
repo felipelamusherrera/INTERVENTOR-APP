@@ -24,7 +24,10 @@ import {
   Send,
   SlidersHorizontal,
   ChevronDown,
-  Sparkles
+  Sparkles,
+  Award,
+  Truck,
+  ShieldCheck
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -48,13 +51,33 @@ import {
   RESTRICCIONES_LOOKAHEAD,
   CAUSAS_OPERATIVAS_NO_FIN
 } from '../../services/baselineService';
-import initialWbsData from '../../data/wbsBelaterraFull.json';
+import { ScheduleService } from '../../services/scheduleService';
+import { BaselineConfigModal } from './bitacora/BaselineConfigModal';
+import { LookaheadCompuertasTab } from './bitacora/LookaheadCompuertasTab';
+import { SellosCalidadTab } from './bitacora/SellosCalidadTab';
+import { CtoComplianceTab } from './bitacora/CtoComplianceTab';
+import { ContratistaSelector } from '../common/ContratistaSelector';
+import { HitoMacro, Sucursal } from '../../types';
+import { MacroMilestoneService } from '../../services/macroMilestoneService';
+import { ProjectService } from '../../services/projectService';
 
-export const BitacoraView: React.FC = () => {
+interface BitacoraViewProps {
+  selectedProject?: string;
+  selectedSucursal?: Sucursal;
+  residenteNombre?: string;
+}
+
+export const BitacoraView: React.FC<BitacoraViewProps> = ({
+  selectedProject = '',
+  selectedSucursal = 'CALI',
+  residenteNombre = 'Residente de Interventoría',
+}) => {
   const [tasks, setTasks] = useState<CpmTask[]>([]);
-  const [proyecto, setProyecto] = useState('Belaterra Pietra');
-  const [sucursal, setSucursal] = useState('CALI');
-  const [residente, setResidente] = useState('Ing. Residente Interventoría');
+  const projectObj = ProjectService.getProjectById(selectedProject);
+  const proyecto = selectedProject;
+  const proyectoLabel = projectObj?.nombreJde || selectedProject || 'Sin proyecto';
+  const sucursal = (projectObj?.sucursal || selectedSucursal || 'CALI') as Sucursal;
+  const residente = residenteNombre;
   
   // Estado de Línea Base
   const [tieneLB, setTieneLB] = useState(false);
@@ -63,13 +86,15 @@ export const BitacoraView: React.FC = () => {
 
   // Semanas y Selección de Corte
   const [semanasDisponibles, setSemanasDisponibles] = useState<SemanaCorteInfo[]>([]);
-  const [fechaCorteSeleccionada, setFechaCorteSeleccionada] = useState<string>('2025-11-20');
+  const [fechaCorteSeleccionada, setFechaCorteSeleccionada] = useState<string>('2026-11-02');
   
   // Calificaciones temporales en borrador: Map de idConsec -> CalificacionActividad
   const [calificaciones, setCalificaciones] = useState<Record<number, CalificacionActividad>>({});
   
-  // Filtro de lista
-  const [filtroTipo, setFiltroTipo] = useState<'TODAS' | 'CRITICAS' | 'PENDIENTES' | 'ANTICIPADAS'>('TODAS');
+  // Subpestaña de Calificación Semanal (Inicios Programados vs Fines Programados)
+  const [subTabEvaluacion, setSubTabEvaluacion] = useState<'INICIOS' | 'FINES'>('INICIOS');
+  // Filtro de lista (por defecto Ruta Crítica - solo tareas tipo 'task')
+  const [filtroTipo, setFiltroTipo] = useState<'CRITICAS' | 'TODAS' | 'PENDIENTES' | 'ANTICIPADAS'>('CRITICAS');
   const [searchTerm, setSearchTerm] = useState('');
 
   // Notificaciones y Modales
@@ -80,10 +105,11 @@ export const BitacoraView: React.FC = () => {
   const [faltantesCriticas, setFaltantesCriticas] = useState<ActividadSemanalBitacora[]>([]);
   const [faltantesObs, setFaltantesObs] = useState<ActividadSemanalBitacora[]>([]);
 
-  // Pestaña activa (Calificación en Vivo vs Histórico de Reportes)
-  const [activeTab, setActiveTab] = useState<'EVALUACION' | 'HISTORICO'>('EVALUACION');
+  // Pestaña activa (Cockpit Central del Residente)
+  const [activeTab, setActiveTab] = useState<'EVALUACION' | 'LOOKAHEAD' | 'SELLOS' | 'CTO' | 'HISTORICO'>('EVALUACION');
   const [reportesHistoricos, setReportesHistoricos] = useState<ReporteSemanalBitacora[]>([]);
   const [reporteSeleccionado, setReporteSeleccionado] = useState<ReporteSemanalBitacora | null>(null);
+  const [wbsAssignments, setWbsAssignments] = useState(() => ScheduleService.getWbsAssignments(proyecto));
 
   const showToast = (msg: string, type: 'success' | 'error' | 'warning' = 'success') => {
     setToastMessage(msg);
@@ -91,24 +117,50 @@ export const BitacoraView: React.FC = () => {
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  // 1. Cargar Tareas y CPM
-  useEffect(() => {
+  // 1. Cargar Tareas y CPM desde la Sábana Centralizada
+  const cargarTareasYProgramacion = () => {
     try {
-      const res = CpmEngine.computeSchedule(initialWbsData as any[]);
+      const activeSchedule = ScheduleService.getActiveSchedule(proyecto);
+      const res = CpmEngine.computeSchedule(activeSchedule as any[]);
       setTasks(res.tasks);
 
-      // Calcular semanas con actividades
-      const semanas = BaselineService.listarSemanasConActividad(res.tasks);
+      // Calcular semanas con actividades tipo 'task' según Línea Base
+      const semanas = BaselineService.listarSemanasConActividad(res.tasks, proyecto);
       setSemanasDisponibles(semanas);
 
-      // Si no hay fecha de corte fija, tomar la primera semana con tareas
-      if (semanas.length > 0 && !fechaCorteSeleccionada) {
-        setFechaCorteSeleccionada(semanas[0].lunesStr);
+      if (semanas.length > 0) {
+        const existeActual = semanas.some(s => s.lunesStr === fechaCorteSeleccionada);
+        if (!existeActual) {
+          const targetRef = new Date().getTime();
+          const masCercana = [...semanas].sort(
+            (a, b) =>
+              Math.abs(new Date(a.lunesStr + 'T12:00:00').getTime() - targetRef) -
+              Math.abs(new Date(b.lunesStr + 'T12:00:00').getTime() - targetRef)
+          )[0];
+          if (masCercana) {
+            setFechaCorteSeleccionada(masCercana.lunesStr);
+          }
+        }
       }
     } catch (e) {
       console.error('Error calculando CPM en Bitácora:', e);
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    cargarTareasYProgramacion();
+  }, [proyecto]);
+
+  // Escuchar actualizaciones globales de la sábana de programación
+  useEffect(() => {
+    const handleScheduleUpdated = () => {
+      cargarTareasYProgramacion();
+      verificarEstadoLB();
+    };
+
+    window.addEventListener('schedule_updated', handleScheduleUpdated);
+    return () => window.removeEventListener('schedule_updated', handleScheduleUpdated);
+  }, [proyecto]);
 
   // 2. Comprobar Línea Base del Proyecto
   const verificarEstadoLB = () => {
@@ -123,9 +175,15 @@ export const BitacoraView: React.FC = () => {
 
   useEffect(() => {
     verificarEstadoLB();
+    setWbsAssignments(ScheduleService.getWbsAssignments(proyecto));
     const handleLBUpdate = () => verificarEstadoLB();
+    const handleAssignUpdate = () => setWbsAssignments(ScheduleService.getWbsAssignments(proyecto));
     window.addEventListener('marval_baseline_updated', handleLBUpdate);
-    return () => window.removeEventListener('marval_baseline_updated', handleLBUpdate);
+    window.addEventListener('marval_wbs_assignments_updated', handleAssignUpdate);
+    return () => {
+      window.removeEventListener('marval_baseline_updated', handleLBUpdate);
+      window.removeEventListener('marval_wbs_assignments_updated', handleAssignUpdate);
+    };
   }, [proyecto]);
 
   // Cargar histórico de reportes
@@ -163,12 +221,17 @@ export const BitacoraView: React.FC = () => {
   }, [infoSemana, proyecto]);
 
   // Manejo de Línea Base
-  const handleCongelarLB = () => {
+  const handleConfirmBaselineMapping = (mapping: Record<HitoMacro, string[]>) => {
     if (!tasks.length) return;
+    MacroMilestoneService.saveProjectMapping(proyecto, mapping);
     BaselineService.guardarLineaBase(proyecto, tasks, residente);
     verificarEstadoLB();
     setShowLbModal(false);
-    showToast('¡Línea Base congelada con éxito! Las fechas Comien y Fin se establecieron como marco contractual.', 'success');
+    showToast('¡Línea Base congelada con éxito! Las tareas han sido mapeadas a los Puntos de Control.', 'success');
+  };
+
+  const handleCongelarLB = () => {
+    setShowLbModal(true);
   };
 
   const handleRestablecerLB = () => {
@@ -249,7 +312,17 @@ export const BitacoraView: React.FC = () => {
     });
   };
 
-  const handleObservacionChange = (act: ActividadSemanalBitacora, obs: string) => {
+  const handleDetalleIncumplimientoChange = (
+    act: ActividadSemanalBitacora,
+    campo:
+      | 'fechaCompromisoInicio'
+      | 'responsableInicio'
+      | 'observacionesInicio'
+      | 'fechaCompromisoFin'
+      | 'responsableFin'
+      | 'observacionesFin',
+    valor: string
+  ) => {
     setCalificaciones(prev => {
       const actual = prev[act.idConsec] || {
         idConsec: act.idConsec,
@@ -261,25 +334,37 @@ export const BitacoraView: React.FC = () => {
         cumpleInicio: null,
         cumpleFin: null,
         observaciones: '',
+        residente,
       };
 
-      const updated = {
+      const updated: CalificacionActividad = {
         ...actual,
         edt: act.edt,
         nombre: act.nombre,
         agrupacion: act.agrupacion,
         esCritica: act.esCritica,
-        observaciones: obs
+        [campo]: valor,
       };
+
+      // Sincronizar campo observaciones consolidado para histórico y Pareto
+      const partesObs = [
+        updated.observacionesInicio ? `Inicio: ${updated.observacionesInicio}` : '',
+        updated.observacionesFin ? `Fin: ${updated.observacionesFin}` : '',
+      ].filter(Boolean);
+      updated.observaciones = partesObs.join(' | ');
 
       const newState = { ...prev, [act.idConsec]: updated };
       const semanaKey = `${infoSemana.anio}-W${infoSemana.numeroSemana}`;
       BaselineService.guardarCalificacionesTemp(proyecto, semanaKey, newState);
       return newState;
     });
+
+    if (campo === 'responsableInicio' || campo === 'responsableFin') {
+      ScheduleService.assignContratistaToEdt(proyecto, act.edt, valor, tasks as any, false);
+    }
   };
 
-  // Filtrado de Actividades
+  // Filtrado de Actividades (solo tipo 'task')
   const actividadesFiltradas = useMemo(() => {
     return actividades.filter(act => {
       // Búsqueda por texto
@@ -297,12 +382,25 @@ export const BitacoraView: React.FC = () => {
       if (filtroTipo === 'ANTICIPADAS') return act.esInicioAnticipado || act.esFinAnticipado;
       if (filtroTipo === 'PENDIENTES') {
         const cal = calificaciones[act.idConsec];
-        const calificada = cal && (cal.cumpleInicio !== null || cal.cumpleFin !== null);
-        return !calificada;
+        const reqIni = act.esInicioEstaSemana;
+        const reqFin = act.esFinEstaSemana;
+        const faltaIni = reqIni && (!cal || cal.cumpleInicio === null || cal.cumpleInicio === undefined);
+        const faltaFin = reqFin && (!cal || cal.cumpleFin === null || cal.cumpleFin === undefined);
+        return faltaIni || faltaFin;
       }
       return true;
     });
   }, [actividades, searchTerm, filtroTipo, calificaciones]);
+
+  const actividadesInicio = useMemo(
+    () => actividadesFiltradas.filter(act => act.esInicioEstaSemana),
+    [actividadesFiltradas]
+  );
+
+  const actividadesFin = useMemo(
+    () => actividadesFiltradas.filter(act => act.esFinEstaSemana),
+    [actividadesFiltradas]
+  );
 
   // Estadísticas en Tiempo Real de la Semana
   const statsSemana = useMemo(() => {
@@ -315,18 +413,22 @@ export const BitacoraView: React.FC = () => {
 
     actividades.forEach(a => {
       const cal = calificaciones[a.idConsec];
-      const tieneCalif = cal && (cal.cumpleInicio !== null || cal.cumpleFin !== null);
-      if (tieneCalif) {
+      const reqIni = a.esInicioEstaSemana;
+      const reqFin = a.esFinEstaSemana;
+      const iniOk = !reqIni || (cal && cal.cumpleInicio !== null && cal.cumpleInicio !== undefined);
+      const finOk = !reqFin || (cal && cal.cumpleFin !== null && cal.cumpleFin !== undefined);
+
+      if (iniOk && finOk) {
         totalCalificadas++;
         if (a.esCritica) criticasCalificadas++;
       }
 
-      if (cal && cal.cumpleInicio !== null) {
+      if (cal && cal.cumpleInicio !== null && cal.cumpleInicio !== undefined) {
         evaluadasInicio++;
         if (cal.cumpleInicio) cumplieronInicio++;
       }
 
-      if (cal && cal.cumpleFin !== null) {
+      if (cal && cal.cumpleFin !== null && cal.cumpleFin !== undefined) {
         evaluadasFin++;
         if (cal.cumpleFin) cumplieronFin++;
       }
@@ -393,7 +495,7 @@ export const BitacoraView: React.FC = () => {
     };
 
     BaselineService.cerrarReporteSemanal(reporte);
-    showToast(`¡Reporte Semanal de la Semana ${infoSemana.numeroSemana} cerrado y emitido con éxito! Sincronizado a SharePoint.`, 'success');
+    showToast(`¡Reporte Semanal de la Semana ${infoSemana.numeroSemana} cerrado y emitido con éxito!`, 'success');
     setActiveTab('HISTORICO');
   };
 
@@ -444,7 +546,7 @@ export const BitacoraView: React.FC = () => {
               <CheckSquare className="w-4 h-4" />
               <span>Módulo 03 · Bitácora Semanal de Interventoría</span>
               <span className="bg-primary-50 text-primary-700 px-2 py-0.5 rounded text-[11px]">
-                {sucursal} · {proyecto}
+                {sucursal} · {proyectoLabel}
               </span>
             </div>
             <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight">
@@ -504,33 +606,69 @@ export const BitacoraView: React.FC = () => {
           </div>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 mt-6 -mb-5 pt-2">
+        {/* Tab Navigation - Cockpit Operativo del Residente */}
+        <div className="flex border-b border-slate-200 mt-6 -mb-5 pt-2 overflow-x-auto">
           <button
             onClick={() => setActiveTab('EVALUACION')}
-            className={`pb-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 transition-all ${
+            className={`pb-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-all ${
               activeTab === 'EVALUACION'
-                ? 'border-primary-600 text-primary-700'
+                ? 'border-blue-600 text-blue-700'
                 : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
             <Smartphone className="w-4 h-4" />
-            <span>Calificación en Campo (Semana Actual)</span>
-            <span className="bg-primary-100 text-primary-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+            <span>1. Calificación Semanal</span>
+            <span className="bg-blue-100 text-blue-800 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
               {actividades.length}
             </span>
           </button>
 
           <button
+            onClick={() => setActiveTab('LOOKAHEAD')}
+            className={`pb-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-all ${
+              activeTab === 'LOOKAHEAD'
+                ? 'border-blue-600 text-blue-700'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Truck className="w-4 h-4" />
+            <span>2. Liberación de restricciones</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('SELLOS')}
+            className={`pb-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-all ${
+              activeTab === 'SELLOS'
+                ? 'border-blue-600 text-blue-700'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Award className="w-4 h-4" />
+            <span>3. Registro sellos de calidad</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('CTO')}
+            className={`pb-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-all ${
+              activeTab === 'CTO'
+                ? 'border-blue-600 text-blue-700'
+                : 'border-transparent text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>4. CTO Ley 1796</span>
+          </button>
+
+          <button
             onClick={() => setActiveTab('HISTORICO')}
-            className={`pb-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 transition-all ${
+            className={`pb-3 px-4 text-xs font-bold border-b-2 flex items-center space-x-2 whitespace-nowrap transition-all ${
               activeTab === 'HISTORICO'
-                ? 'border-primary-600 text-primary-700'
+                ? 'border-blue-600 text-blue-700'
                 : 'border-transparent text-slate-500 hover:text-slate-900'
             }`}
           >
             <BarChart3 className="w-4 h-4" />
-            <span>Histórico de Reportes Cerrados</span>
+            <span>5. Histórico Reportes</span>
             <span className="bg-slate-100 text-slate-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
               {reportesHistoricos.length}
             </span>
@@ -647,356 +785,443 @@ export const BitacoraView: React.FC = () => {
             </div>
           </div>
 
-          {/* Filtros de la Lista de Tareas */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-3 border border-surface-border rounded-xl shadow-sm">
-            <div className="flex items-center space-x-2">
+          {/* Subpestañas de Calificación Semanal: Inicios Programados vs Fines Programados */}
+          <div className="bg-white border border-surface-border rounded-xl p-3 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+            <div className="flex items-center bg-slate-100 p-1 rounded-xl text-xs font-bold self-start">
+              <button
+                type="button"
+                onClick={() => setSubTabEvaluacion('INICIOS')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
+                  subTabEvaluacion === 'INICIOS'
+                    ? 'bg-blue-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <ArrowRight className="w-3.5 h-3.5" />
+                <span>1A. Inicios Programados</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                  subTabEvaluacion === 'INICIOS' ? 'bg-blue-800 text-blue-100' : 'bg-white text-slate-700'
+                }`}>
+                  {actividadesInicio.length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSubTabEvaluacion('FINES')}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
+                  subTabEvaluacion === 'FINES'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>1B. Fines Programados</span>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
+                  subTabEvaluacion === 'FINES' ? 'bg-emerald-800 text-emerald-100' : 'bg-white text-slate-700'
+                }`}>
+                  {actividadesFin.length}
+                </span>
+              </button>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
               <input
                 type="text"
                 placeholder="Buscar por EDT, actividad o torre..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 w-64"
+                className="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 w-56"
               />
-            </div>
 
-            <div className="flex items-center space-x-1.5 overflow-x-auto text-xs font-bold">
-              <button
-                onClick={() => setFiltroTipo('TODAS')}
-                className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  filtroTipo === 'TODAS'
-                    ? 'bg-slate-900 text-white'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                Todas ({actividades.length})
-              </button>
+              <div className="flex items-center space-x-1.5 overflow-x-auto text-xs font-bold">
+                <button
+                  type="button"
+                  onClick={() => setFiltroTipo('CRITICAS')}
+                  className={`px-3 py-1.5 rounded-lg transition-colors flex items-center space-x-1 ${
+                    filtroTipo === 'CRITICAS'
+                      ? 'bg-red-600 text-white'
+                      : 'bg-red-50 text-red-700 hover:bg-red-100'
+                  }`}
+                >
+                  <Flame className="w-3.5 h-3.5" />
+                  <span>Ruta Crítica (Task) ({totalCriticas})</span>
+                </button>
 
-              <button
-                onClick={() => setFiltroTipo('CRITICAS')}
-                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center space-x-1 ${
-                  filtroTipo === 'CRITICAS'
-                    ? 'bg-red-600 text-white'
-                    : 'bg-red-50 text-red-700 hover:bg-red-100'
-                }`}
-              >
-                <Flame className="w-3.5 h-3.5" />
-                <span>Ruta Crítica ({totalCriticas})</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltroTipo('TODAS')}
+                  className={`px-3 py-1.5 rounded-lg transition-colors ${
+                    filtroTipo === 'TODAS'
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  Todas las Tareas Task ({actividades.length})
+                </button>
 
-              <button
-                onClick={() => setFiltroTipo('PENDIENTES')}
-                className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  filtroTipo === 'PENDIENTES'
-                    ? 'bg-amber-600 text-white'
-                    : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
-                }`}
-              >
-                Pendientes ({actividades.length - statsSemana.totalCalificadas})
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltroTipo('PENDIENTES')}
+                  className={`px-3 py-1.5 rounded-lg transition-colors ${
+                    filtroTipo === 'PENDIENTES'
+                      ? 'bg-amber-600 text-white'
+                      : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
+                  }`}
+                >
+                  Pendientes ({actividades.length - statsSemana.totalCalificadas})
+                </button>
 
-              <button
-                onClick={() => setFiltroTipo('ANTICIPADAS')}
-                className={`px-3 py-1.5 rounded-lg transition-colors ${
-                  filtroTipo === 'ANTICIPADAS'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
-                }`}
-              >
-                Anticipadas vs LB
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setFiltroTipo('ANTICIPADAS')}
+                  className={`px-3 py-1.5 rounded-lg transition-colors ${
+                    filtroTipo === 'ANTICIPADAS'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                  }`}
+                >
+                  Anticipadas vs LB
+                </button>
+              </div>
             </div>
           </div>
 
-          {/* LISTA DE ACTIVIDADES A CALIFICAR */}
-          <div className="space-y-4">
-            {actividadesFiltradas.length === 0 ? (
-              <div className="bg-white border border-surface-border rounded-xl p-12 text-center text-slate-500">
-                <CheckCircle2 className="w-12 h-12 mx-auto text-slate-300 mb-2" />
-                <div className="text-base font-bold text-slate-800">No hay actividades para el filtro seleccionado</div>
-                <p className="text-xs text-slate-500 mt-1">
-                  En esta semana de corte no hay actividades que cumplan con la condición seleccionada.
-                </p>
-              </div>
-            ) : (
-              actividadesFiltradas.map((act) => {
-                const cal = calificaciones[act.idConsec] || {
-                  idConsec: act.idConsec,
-                  calificado: false,
-                  cumpleInicio: null,
-                  cumpleFin: null,
-                  observaciones: '',
-                };
+          <div className="bg-blue-50/70 border border-blue-200 rounded-xl px-4 py-2.5 text-xs text-blue-900 flex items-center justify-between flex-wrap gap-2">
+            <span>
+              <strong>Filtro Activo (Solo Tareas Ejecutables &quot;task&quot;):</strong> Las tareas resumen o hitos de título quedan excluidos de calificación semanal.{' '}
+              {subTabEvaluacion === 'INICIOS'
+                ? 'Mostrando únicamente actividades cuyo inicio programado corresponde a esta ventana.'
+                : 'Mostrando únicamente actividades cuyo fin programado corresponde a esta ventana.'}
+            </span>
+          </div>
 
-                const noCumpleCualquiera = cal.cumpleInicio === false || cal.cumpleFin === false;
-                const obsInvalida = noCumpleCualquiera && (!cal.observaciones || cal.observaciones.trim().length < 5);
-
-                return (
-                  <div
-                    key={act.idConsec}
-                    className={`bg-white border rounded-xl p-4 sm:p-5 shadow-sm transition-all ${
-                      act.esCritica
-                        ? 'border-l-4 border-l-red-600 border-slate-200'
-                        : 'border-l-4 border-l-emerald-500 border-slate-200'
-                    }`}
-                  >
-                    {/* Header de la Actividad */}
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-slate-100 pb-3">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-mono text-xs font-black bg-slate-100 text-slate-800 px-2 py-0.5 rounded">
-                          {act.edt}
-                        </span>
-
-                        <span className="bg-blue-50 text-blue-700 font-bold text-[11px] px-2 py-0.5 rounded">
-                          {act.agrupacion}
-                        </span>
-
-                        {act.esCritica ? (
-                          <span className="bg-red-100 text-red-800 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full flex items-center space-x-1 animate-pulse">
-                            <Flame className="w-3 h-3 text-red-600" />
-                            <span>RUTA CRÍTICA · OBLIGATORIA</span>
-                          </span>
-                        ) : (
-                          <span className="bg-emerald-50 text-emerald-700 font-semibold text-[11px] px-2 py-0.5 rounded">
-                            Holgura: {act.tf} días
-                          </span>
-                        )}
-
-                        {act.esInicioAnticipado && (
-                          <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                            ⚡ Inicio Anticipado vs LB
-                          </span>
-                        )}
-                        {act.esFinAnticipado && (
-                          <span className="bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded">
-                            ⚡ Fin Anticipado vs LB
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Avance WorkPlanner */}
-                      <div className="flex items-center space-x-3 text-xs">
-                        <span className="text-slate-400">Avance WP:</span>
-                        <div className="flex items-center space-x-1.5 font-black text-slate-900">
-                          <div className="w-16 bg-slate-100 rounded-full h-2 overflow-hidden">
-                            <div
-                              className="bg-primary-600 h-2 rounded-full"
-                              style={{ width: `${Math.min(100, Math.round(act.w * 100))}%` }}
-                            />
-                          </div>
-                          <span>{Math.round(act.w * 100)}%</span>
-                        </div>
-                      </div>
+          {/* LISTA DE ACTIVIDADES SEGÚN SUBPESTAÑA ACTIVA */}
+          {(() => {
+            const listaActual = subTabEvaluacion === 'INICIOS' ? actividadesInicio : actividadesFin;
+            return (
+              <div className="space-y-4">
+                {listaActual.length === 0 ? (
+                  <div className="bg-white border border-surface-border rounded-xl p-12 text-center text-slate-500">
+                    <CheckCircle2 className="w-12 h-12 mx-auto text-slate-300 mb-2" />
+                    <div className="text-base font-bold text-slate-800">
+                      No hay actividades con {subTabEvaluacion === 'INICIOS' ? 'inicio programado' : 'fin programado'} para el filtro seleccionado
                     </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      Puede cambiar entre &quot;Ruta Crítica (Task)&quot; y &quot;Todas las Tareas Task&quot; o seleccionar otra semana de corte.
+                    </p>
+                  </div>
+                ) : (
+                  listaActual.map((act) => {
+                    const cal = calificaciones[act.idConsec] || {
+                      idConsec: act.idConsec,
+                      calificado: false,
+                      cumpleInicio: null,
+                      cumpleFin: null,
+                      observaciones: '',
+                    };
 
-                    {/* Nombre y Fechas Comparativas */}
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-3">
-                      <div className="lg:col-span-6">
-                        <h3 className="text-sm md:text-base font-bold text-slate-900">
-                          {act.nombre}
-                        </h3>
-                        <div className="flex flex-wrap gap-1.5 mt-2">
-                          {act.motivoInclusion.map((m, mIdx) => (
-                            <span key={mIdx} className="text-[10px] bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-medium">
-                              • {m}
+                    const esInicioTab = subTabEvaluacion === 'INICIOS';
+                    const cumpleActual = esInicioTab ? cal.cumpleInicio : cal.cumpleFin;
+                    const noCumpleActual = cumpleActual === false;
+                    const obsActual = esInicioTab
+                      ? (cal.observacionesInicio ?? '')
+                      : (cal.observacionesFin ?? '');
+                    const fechaCompActual = esInicioTab
+                      ? (cal.fechaCompromisoInicio || '')
+                      : (cal.fechaCompromisoFin || '');
+                    const contratistaWbs = wbsAssignments.contratistaByEdt[act.edt] || '';
+                    const responsableActual = esInicioTab
+                      ? (cal.responsableInicio || contratistaWbs)
+                      : (cal.responsableFin || contratistaWbs);
+                    const causaActual = esInicioTab
+                      ? (cal.causaNoInicio || '')
+                      : (cal.causaNoFin || '');
+
+                    const detalleIncompleto =
+                      noCumpleActual &&
+                      (!causaActual || !fechaCompActual || !responsableActual || obsActual.trim().length < 5);
+
+                    return (
+                      <div
+                        key={`${subTabEvaluacion}-${act.idConsec}`}
+                        className={`bg-white border rounded-xl p-4 sm:p-5 shadow-sm transition-all ${
+                          act.esCritica
+                            ? 'border-l-4 border-l-red-600 border-slate-200'
+                            : 'border-l-4 border-l-emerald-500 border-slate-200'
+                        }`}
+                      >
+                        {/* Header de la Actividad */}
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="font-mono text-xs font-black bg-slate-100 text-slate-800 px-2 py-0.5 rounded">
+                              {act.edt}
                             </span>
-                          ))}
-                        </div>
-                      </div>
 
-                      {/* Caja de Comparación de Fechas: Línea Base vs WorkPlanner Reprogramado */}
-                      <div className="lg:col-span-6 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
-                        <div className="grid grid-cols-2 gap-3 text-[11px]">
-                          <div>
-                            <span className="text-slate-400 font-semibold block uppercase text-[9px]">Línea Base Contractual</span>
-                            <div className="font-semibold text-slate-700 mt-0.5">
-                              Inicio: <strong className="text-slate-900">{act.comienzoLineaBase || 'N/A'}</strong>
-                            </div>
-                            <div className="font-semibold text-slate-700">
-                              Fin: <strong className="text-slate-900">{act.finLineaBase || 'N/A'}</strong> ({act.duraLineaBase}d)
-                            </div>
-                          </div>
-
-                          <div>
-                            <span className="text-blue-500 font-semibold block uppercase text-[9px]">WorkPlanner Actual</span>
-                            <div className="font-semibold text-blue-900 mt-0.5">
-                              Comien: <strong>{act.comien}</strong>
-                            </div>
-                            <div className="font-semibold text-blue-900">
-                              Fin: <strong>{act.fin}</strong> ({act.dura}d)
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* SECCIÓN DE CALIFICACIÓN INTERACTIVA */}
-                    <div className="mt-4 pt-4 border-t border-slate-100 bg-slate-50/60 -mx-4 -mb-4 p-4 rounded-b-xl">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {/* CALIFICACIÓN DE INICIO */}
-                        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                              <span>¿Inició en Campo según Programa?</span>
+                            <span className="bg-slate-900 text-white font-mono text-[10px] font-bold px-2 py-0.5 rounded uppercase">
+                              task
                             </span>
-                            <span className="text-[10px] text-slate-400 font-mono">
-                              Programado: {act.comien}
+
+                            <span className="bg-blue-50 text-blue-700 font-bold text-[11px] px-2 py-0.5 rounded">
+                              {act.agrupacion}
                             </span>
-                          </div>
 
-                          <div className="grid grid-cols-2 gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleCalificar(act, 'cumpleInicio', true)}
-                              className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
-                                cal.cumpleInicio === true
-                                  ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400'
-                                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                              }`}
-                            >
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              <span>Sí Inició</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleCalificar(act, 'cumpleInicio', false)}
-                              className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
-                                cal.cumpleInicio === false
-                                  ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400'
-                                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                              }`}
-                            >
-                              <XCircle className="w-3.5 h-3.5" />
-                              <span>No Inició</span>
-                            </button>
-                          </div>
-
-                          {/* Si NO inició: Selector obligatorio de las 7 Restricciones Lookahead */}
-                          {cal.cumpleInicio === false && (
-                            <div className="mt-3 pt-2 border-t border-slate-100">
-                              <label className="text-[11px] font-bold text-red-700 block mb-1">
-                                Causa No Inicio (Restricción Lookahead Lean):
-                              </label>
-                              <select
-                                value={cal.causaNoInicio || ''}
-                                onChange={(e) => handleCausaChange(act, 'inicio', e.target.value)}
-                                className="w-full bg-red-50/50 border border-red-300 text-xs text-red-900 rounded-lg p-2 font-medium focus:ring-2 focus:ring-red-500 focus:outline-none"
-                              >
-                                <option value="">-- Seleccione Compuerta Fallida --</option>
-                                {RESTRICCIONES_LOOKAHEAD.map((r, rIdx) => (
-                                  <option key={rIdx} value={r}>
-                                    {r}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* CALIFICACIÓN DE FIN */}
-                        <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-bold text-slate-800 flex items-center space-x-1.5">
-                              <span>¿Finalizó en Campo según Programa?</span>
-                            </span>
-                            <span className="text-[10px] text-slate-400 font-mono">
-                              Programado: {act.fin}
-                            </span>
-                          </div>
-
-                          <div className="grid grid-cols-2 gap-2">
-                            <button
-                              type="button"
-                              onClick={() => handleCalificar(act, 'cumpleFin', true)}
-                              className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
-                                cal.cumpleFin === true
-                                  ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400'
-                                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                              }`}
-                            >
-                              <CheckCircle2 className="w-3.5 h-3.5" />
-                              <span>Sí Finalizó</span>
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => handleCalificar(act, 'cumpleFin', false)}
-                              className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
-                                cal.cumpleFin === false
-                                  ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400'
-                                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                              }`}
-                            >
-                              <XCircle className="w-3.5 h-3.5" />
-                              <span>No Finalizó</span>
-                            </button>
-                          </div>
-
-                          {/* Si NO finalizó: Selector de Causas Operativas de Fin */}
-                          {cal.cumpleFin === false && (
-                            <div className="mt-3 pt-2 border-t border-slate-100">
-                              <label className="text-[11px] font-bold text-red-700 block mb-1">
-                                Causa No Fin (Causa Operativa de Obra):
-                              </label>
-                              <select
-                                value={cal.causaNoFin || ''}
-                                onChange={(e) => handleCausaChange(act, 'fin', e.target.value)}
-                                className="w-full bg-red-50/50 border border-red-300 text-xs text-red-900 rounded-lg p-2 font-medium focus:ring-2 focus:ring-red-500 focus:outline-none"
-                              >
-                                <option value="">-- Seleccione Causa Operativa --</option>
-                                {CAUSAS_OPERATIVAS_NO_FIN.map((c, cIdx) => (
-                                  <option key={cIdx} value={c}>
-                                    {c}
-                                  </option>
-                                ))}
-                              </select>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Observaciones (OBLIGATORIAS si no cumple inicio o fin) */}
-                      <div className="mt-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <label className={`text-xs font-bold flex items-center space-x-1.5 ${
-                            noCumpleCualquiera ? 'text-red-700' : 'text-slate-700'
-                          }`}>
-                            <span>Observaciones del Residente en Campo</span>
-                            {noCumpleCualquiera && (
-                              <span className="text-[10px] bg-red-100 text-red-800 px-1.5 py-0.2 rounded font-black">
-                                * OBLIGATORIO POR INCUMPLIMIENTO
+                            {act.esCritica ? (
+                              <span className="bg-red-100 text-red-800 font-extrabold text-[11px] px-2.5 py-0.5 rounded-full flex items-center space-x-1">
+                                <Flame className="w-3 h-3 text-red-600" />
+                                <span>RUTA CRÍTICA · OBLIGATORIA</span>
+                              </span>
+                            ) : (
+                              <span className="bg-emerald-50 text-emerald-700 font-semibold text-[11px] px-2 py-0.5 rounded">
+                                Holgura: {act.tf} días
                               </span>
                             )}
-                          </label>
-                          {obsInvalida && (
-                            <span className="text-[10px] text-red-600 font-semibold">
-                              Debe justificar el motivo del atraso
-                            </span>
-                          )}
+                          </div>
+
+                          {/* Avance WorkPlanner */}
+                          <div className="flex items-center space-x-3 text-xs">
+                            <span className="text-slate-400">Avance WP:</span>
+                            <div className="flex items-center space-x-1.5 font-black text-slate-900">
+                              <div className="w-16 bg-slate-100 rounded-full h-2 overflow-hidden">
+                                <div
+                                  className="bg-primary-600 h-2 rounded-full"
+                                  style={{ width: `${Math.min(100, Math.round(act.w * 100))}%` }}
+                                />
+                              </div>
+                              <span>{Math.round(act.w * 100)}%</span>
+                            </div>
+                          </div>
                         </div>
 
-                        <textarea
-                          rows={2}
-                          placeholder={
-                            noCumpleCualquiera
-                              ? "Escriba detalladamente el motivo por el cual no se cumplió con el hito o actividad (mínimo 5 caracteres)..."
-                              : "Observaciones de seguimiento o notas de obra (opcional)..."
-                          }
-                          value={cal.observaciones || ''}
-                          onChange={(e) => handleObservacionChange(act, e.target.value)}
-                          className={`w-full text-xs rounded-lg p-2.5 transition-all ${
-                            obsInvalida
-                              ? 'bg-red-50 border-2 border-red-500 text-red-900 placeholder-red-400 focus:outline-none ring-2 ring-red-200'
-                              : 'bg-white border border-slate-300 text-slate-800 focus:ring-2 focus:ring-primary-500 focus:outline-none'
-                          }`}
-                        />
+                        {/* Nombre y Fechas Comparativas */}
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-3">
+                          <div className="lg:col-span-6">
+                            <h3 className="text-sm md:text-base font-bold text-slate-900">
+                              {act.nombre}
+                            </h3>
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {act.motivoInclusion.map((m, mIdx) => (
+                                <span key={mIdx} className="text-[10px] bg-slate-50 border border-slate-200 text-slate-600 px-2 py-0.5 rounded font-medium">
+                                  • {m}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="lg:col-span-6 bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs">
+                            <div className="grid grid-cols-2 gap-3 text-[11px]">
+                              <div>
+                                <span className="text-slate-400 font-semibold block uppercase text-[9px]">Línea Base Contractual</span>
+                                <div className="font-semibold text-slate-700 mt-0.5">
+                                  Inicio LB: <strong className="text-slate-900">{act.comienzoLineaBase || 'N/A'}</strong>
+                                </div>
+                                <div className="font-semibold text-slate-700">
+                                  Fin LB: <strong className="text-slate-900">{act.finLineaBase || 'N/A'}</strong> ({act.duraLineaBase}d)
+                                </div>
+                              </div>
+
+                              <div>
+                                <span className="text-blue-500 font-semibold block uppercase text-[9px]">WorkPlanner Actual</span>
+                                <div className="font-semibold text-blue-900 mt-0.5">
+                                  Comien: <strong>{act.comien}</strong>
+                                </div>
+                                <div className="font-semibold text-blue-900">
+                                  Fin: <strong>{act.fin}</strong> ({act.dura}d)
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* SECCIÓN DE CALIFICACIÓN ÚNICA SEGÚN PESTAÑA (INICIOS O FINES) */}
+                        <div className="mt-4 pt-4 border-t border-slate-100 bg-slate-50/70 -mx-4 -mb-4 p-4 rounded-b-xl">
+                          <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs space-y-3">
+                            {/* Avisos Informativos y Alertas Operativas Exactas */}
+                            {esInicioTab && act.esInicioAnticipado && (
+                              <div className="p-2.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-900 text-xs flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-blue-600 shrink-0" />
+                                <span>
+                                  <strong>Inicio anticipado (adelanto en inicio):</strong> la actividad tiene avance ({Math.round(act.w * 100)}%) y su inicio proyectado/real (<strong>{act.comien}</strong>) es anterior a la ventana analizada.
+                                </span>
+                              </div>
+                            )}
+
+                            {!esInicioTab && act.alertaPrioridadFinSinAvanceCritica && (
+                              <div className="p-2.5 rounded-lg bg-red-50 border-2 border-red-300 text-red-900 text-xs flex items-start gap-2">
+                                <AlertTriangle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                                <span>
+                                  <strong>Alerta Informativa de Prioridad · Ruta Crítica:</strong> Esta actividad tiene <strong>0% de avance</strong> al llegar a su Fin de Línea Base (<strong>{act.finLineaBase}</strong>). No solo incumplió el inicio programado, sino que tampoco inició durante todo el periodo de ejecución.
+                                </span>
+                              </div>
+                            )}
+
+                            {!esInicioTab && act.esFinAnticipado && (
+                              <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center gap-2">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                <span>
+                                  <strong>Fin anticipado:</strong> la actividad reporta 100% de avance y su fin proyectado/real (<strong>{act.fin}</strong>) se ubicó en la semana anterior o más antigua. Confirme si finalizó realmente.
+                                </span>
+                              </div>
+                            )}
+
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                              <span className="text-xs font-extrabold text-slate-800">
+                                {esInicioTab
+                                  ? '¿Se cumplió el Inicio Programado en esta semana?'
+                                  : '¿Se cumplió el Fin Programado en esta semana?'}
+                              </span>
+                              <span className="text-[11px] text-slate-500 font-mono">
+                                {esInicioTab ? 'Inicio LB' : 'Fin LB'}: <strong>{esInicioTab ? act.comienzoLineaBase : act.finLineaBase}</strong>
+                                {' · '}
+                                {esInicioTab ? 'Inicio Proy.' : 'Fin Proy.'}: <strong>{esInicioTab ? act.comien : act.fin}</strong>
+                              </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 max-w-md">
+                              <button
+                                type="button"
+                                onClick={() => handleCalificar(act, esInicioTab ? 'cumpleInicio' : 'cumpleFin', true)}
+                                className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
+                                  cumpleActual === true
+                                    ? 'bg-emerald-600 text-white shadow-sm ring-2 ring-emerald-400'
+                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                }`}
+                              >
+                                <CheckCircle2 className="w-4 h-4" />
+                                <span>{esInicioTab ? 'Sí Cumplió Inicio' : 'Sí Cumplió Fin'}</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => handleCalificar(act, esInicioTab ? 'cumpleInicio' : 'cumpleFin', false)}
+                                className={`py-2 px-3 rounded-lg text-xs font-bold flex items-center justify-center space-x-1.5 transition-all ${
+                                  cumpleActual === false
+                                    ? 'bg-red-600 text-white shadow-sm ring-2 ring-red-400'
+                                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                }`}
+                              >
+                                <XCircle className="w-4 h-4" />
+                                <span>{esInicioTab ? 'No Cumplió Inicio' : 'No Cumplió Fin'}</span>
+                              </button>
+                            </div>
+
+                            {/* Alerta 1A: Residente confirma que SÍ inició en campo pero % avance WP es 0% */}
+                            {esInicioTab && cumpleActual === true && Math.round(act.w * 100) === 0 && (
+                              <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-300 text-amber-950 text-xs font-bold flex items-center gap-2">
+                                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                                <span>Pendiente dar avance en workplanner, actividad en ejecución</span>
+                              </div>
+                            )}
+
+                            {/* Alerta 1B: Residente confirma que SÍ finalizó en campo pero % avance WP es < 100% */}
+                            {!esInicioTab && cumpleActual === true && Math.round(act.w * 100) < 100 && (
+                              <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-300 text-amber-950 text-xs font-bold flex items-center gap-2">
+                                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                                <span>Pendiente dar avance al 100% en Workplanner</span>
+                              </div>
+                            )}
+
+                            {/* Formulario de Desviación Obligatorio si NO cumplió */}
+                            {noCumpleActual && (
+                              <div className="mt-3 pt-3 border-t border-red-100 bg-red-50/40 p-3 rounded-xl space-y-3">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[11px] font-black text-red-800 uppercase">
+                                    Registro Obligatorio de Incumplimiento
+                                  </span>
+                                  {detalleIncompleto && (
+                                    <span className="text-[10px] bg-red-100 text-red-800 px-2 py-0.5 rounded font-bold">
+                                      * Complete Causa, Fecha Compromiso, Responsable y Observación
+                                    </span>
+                                  )}
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                  {/* Causa */}
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                                      {esInicioTab ? 'Causa No Inicio (Lookahead) *' : 'Causa No Fin (Operativa) *'}
+                                    </label>
+                                    <select
+                                      value={causaActual}
+                                      onChange={(e) => handleCausaChange(act, esInicioTab ? 'inicio' : 'fin', e.target.value)}
+                                      className="w-full bg-white border border-red-300 text-xs text-slate-900 rounded-lg p-2 font-medium focus:ring-2 focus:ring-red-500 focus:outline-none"
+                                    >
+                                      <option value="">-- Seleccione Causa --</option>
+                                      {(esInicioTab ? RESTRICCIONES_LOOKAHEAD : CAUSAS_OPERATIVAS_NO_FIN).map((c, idx) => (
+                                        <option key={idx} value={c}>
+                                          {c}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </div>
+
+                                  {/* Fecha de Compromiso */}
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                                      Fecha de Compromiso *
+                                    </label>
+                                    <input
+                                      type="date"
+                                      value={fechaCompActual}
+                                      onChange={(e) =>
+                                        handleDetalleIncumplimientoChange(
+                                          act,
+                                          esInicioTab ? 'fechaCompromisoInicio' : 'fechaCompromisoFin',
+                                          e.target.value
+                                        )
+                                      }
+                                      className="w-full bg-white border border-red-300 text-xs text-slate-900 rounded-lg p-1.5 font-medium focus:ring-2 focus:ring-red-500 focus:outline-none"
+                                    />
+                                  </div>
+
+                                  {/* Responsable (AN8 + Marval Ingeniería) */}
+                                  <div>
+                                    <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                                      Responsable (AN8 / Marval) *
+                                    </label>
+                                    <ContratistaSelector
+                                      value={responsableActual}
+                                      onChange={(val) =>
+                                        handleDetalleIncumplimientoChange(
+                                          act,
+                                          esInicioTab ? 'responsableInicio' : 'responsableFin',
+                                          val
+                                        )
+                                      }
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Observaciones */}
+                                <div>
+                                  <label className="text-[11px] font-bold text-slate-700 block mb-1">
+                                    Observación / Plan de Choque *
+                                  </label>
+                                  <textarea
+                                    rows={2}
+                                    placeholder="Detalle el motivo del incumplimiento y las acciones de recuperación (mínimo 5 caracteres)..."
+                                    value={obsActual}
+                                    onChange={(e) =>
+                                      handleDetalleIncumplimientoChange(
+                                        act,
+                                        esInicioTab ? 'observacionesInicio' : 'observacionesFin',
+                                        e.target.value
+                                      )
+                                    }
+                                    className="w-full bg-white border border-red-300 text-xs text-slate-900 rounded-lg p-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+                    );
+                  })
+                )}
+              </div>
+            );
+          })()}
 
           {/* Gráfico de Pareto de Causas CNC */}
           {paretoData.length > 0 && (
@@ -1037,7 +1262,36 @@ export const BitacoraView: React.FC = () => {
         </div>
       )}
 
-      {/* PESTAÑA 2: HISTÓRICO DE REPORTES SEMANALES CERRADOS */}
+      {/* PESTAÑA 2: LIBERACIÓN DE RESTRICCIONES (SOLO GESTIÓN DE RESTRICCIONES) */}
+      {activeTab === 'LOOKAHEAD' && (
+        <LookaheadCompuertasTab 
+          proyectoId={proyecto} 
+          sucursal={sucursal as any} 
+          residenteNombre={residente}
+          mode="GESTION_RESTRICCIONES"
+          fechaCorteActiva={fechaCorteSeleccionada}
+        />
+      )}
+
+      {/* PESTAÑA 3: SELLOS DE CALIDAD */}
+      {activeTab === 'SELLOS' && (
+        <SellosCalidadTab 
+          proyectoId={proyecto} 
+          sucursal={sucursal as any} 
+          residenteNombre={residente} 
+        />
+      )}
+
+      {/* PESTAÑA 4: CTO LEY 1796 */}
+      {activeTab === 'CTO' && (
+        <CtoComplianceTab 
+          proyectoId={proyecto} 
+          sucursal={sucursal as any} 
+          residenteNombre={residente} 
+        />
+      )}
+
+      {/* PESTAÑA 5: HISTÓRICO DE REPORTES SEMANALES CERRADOS */}
       {activeTab === 'HISTORICO' && (
         <div className="space-y-6">
           <div className="bg-white border border-surface-border rounded-xl p-5 shadow-sm">
@@ -1169,49 +1423,15 @@ export const BitacoraView: React.FC = () => {
         </div>
       )}
 
-      {/* MODAL: CONGELAR LÍNEA BASE */}
-      {showLbModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-            <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-700 font-black">
-              <Lock className="w-6 h-6" />
-            </div>
-            <div>
-              <h3 className="text-lg font-black text-slate-900">
-                Fijar Sábana Actual como Línea Base Oficial
-              </h3>
-              <p className="text-xs text-slate-600 mt-1">
-                Al congelar la Línea Base, el sistema guardará las columnas <strong>Comien</strong>, <strong>Fin</strong> y <strong>Dura</strong> de las {tasks.length} tareas del proyecto <strong>{proyecto}</strong> como marco contractual definitivo. 
-                Las cargas semanales posteriores conservarán esta línea base para calcular desvíos e identificar inicios y fines anticipados.
-              </p>
-            </div>
-
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1 text-slate-700">
-              <div><strong>Proyecto:</strong> {proyecto}</div>
-              <div><strong>Tareas a congelar:</strong> {tasks.length}</div>
-              <div><strong>Residente Responsable:</strong> {residente}</div>
-              <div><strong>Fecha de congelación:</strong> {new Date().toLocaleDateString()}</div>
-            </div>
-
-            <div className="flex items-center justify-end space-x-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setShowLbModal(false)}
-                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={handleCongelarLB}
-                className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2 rounded-xl text-xs font-bold shadow-md"
-              >
-                Confirmar y Congelar Línea Base
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* MODAL: CONFIGURADOR DE LÍNEA BASE E HITOS MACRO */}
+      <BaselineConfigModal
+        isOpen={showLbModal}
+        onClose={() => setShowLbModal(false)}
+        tasks={tasks as any}
+        proyectoId={proyecto}
+        residenteNombre={residente}
+        onConfirmBaseline={handleConfirmBaselineMapping}
+      />
 
       {/* MODAL: BLOQUEO DE VALIDACIÓN DE CIERRE */}
       {showValidationModal && (

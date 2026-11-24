@@ -142,9 +142,9 @@ export const ReportePdfView: React.FC<ReportePdfViewProps> = ({
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center space-x-1.5">
                 <Clock className="w-3.5 h-3.5 text-blue-600" />
-                <span>Estado de Macro-Hitos (Métricas I / E)</span>
+                <span>Estado de Puntos de Control (Métricas I / E)</span>
               </h3>
-              <span className="text-[10px] text-slate-400">12 Macro-Hitos</span>
+              <span className="text-[10px] text-slate-400">Puntos de Control</span>
             </div>
 
             <table className="w-full text-left text-[10px] tabular-nums">

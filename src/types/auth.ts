@@ -1,20 +1,39 @@
-import { Sucursal } from './index';
+import { SucursalOperativa } from './index';
 
-export type Rol = 
+export type Rol =
+  | 'ADMINISTRADOR'
   | 'RESIDENTE_INTERVENTORIA'
-  | 'DIRECTOR_OBRA'
-  | 'DIRECTOR_INTERVENTORIA'
-  | 'GERENTE_INTERVENTORIA'
-  | 'DIRECTIVO'
-  | 'ADMINISTRADOR';
+  | 'DIRECTOR_GERENTE_INTERVENTORIA'
+  | 'DIRECTOR_OBRA_GERENTE_AREA';
+
+export const ROLES_OFICIALES: Array<{ value: Rol; label: string; descripcion: string }> = [
+  {
+    value: 'ADMINISTRADOR',
+    label: 'Administrador',
+    descripcion: 'Control total de la plataforma, aprobación de usuarios y asignación de proyectos.',
+  },
+  {
+    value: 'RESIDENTE_INTERVENTORIA',
+    label: 'Residente interventoría',
+    descripcion: 'Creación y operación de campo en sus proyectos asignados.',
+  },
+  {
+    value: 'DIRECTOR_GERENTE_INTERVENTORIA',
+    label: 'Director/Gerente de interventoría',
+    descripcion: 'Consulta de Tableros Gerenciales consolidados de proyectos cargados.',
+  },
+  {
+    value: 'DIRECTOR_OBRA_GERENTE_AREA',
+    label: 'Director de obra/Gerente de área',
+    descripcion: 'Consulta ejecutiva de Tableros Gerenciales y seguimiento de indicadores.',
+  },
+];
 
 export const ROL_LABEL: Record<Rol, string> = {
-  RESIDENTE_INTERVENTORIA: 'Residente de Interventoría',
-  DIRECTOR_OBRA: 'Director de Obra',
-  DIRECTOR_INTERVENTORIA: 'Director de Interventoría',
-  GERENTE_INTERVENTORIA: 'Gerente de Interventoría',
-  DIRECTIVO: 'Directivo / Ejecutivo',
-  ADMINISTRADOR: 'Administrador del Sistema',
+  ADMINISTRADOR: 'Administrador',
+  RESIDENTE_INTERVENTORIA: 'Residente interventoría',
+  DIRECTOR_GERENTE_INTERVENTORIA: 'Director/Gerente de interventoría',
+  DIRECTOR_OBRA_GERENTE_AREA: 'Director de obra/Gerente de área',
 };
 
 export type EstadoUsuario = 'PENDIENTE' | 'ACTIVO' | 'RECHAZADO' | 'INACTIVO';
@@ -24,11 +43,11 @@ export interface Usuario {
   nombre: string;
   usuario: string;
   correo: string;
-  password?: string;
+  password: string;
   rol: Rol;
   estado: EstadoUsuario;
-  sucursal: Exclude<Sucursal, 'TODAS'>;
-  proyectos: string[];
+  sucursal: SucursalOperativa;
+  proyectos: string[]; // IDs de proyectos asignados
   aprobadoPor?: string;
   fechaAprobacion?: string;
   motivoRechazo?: string;

@@ -2,10 +2,201 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 @layer base {
   body {
     @apply bg-surface-canvas text-slate-800 antialiased font-sans;
   }
+}
+
+/* =====================================================
+ * Hyperframes Motion Primitives (100% Pure CSS · Lovable Ready)
+ * ===================================================== */
+@keyframes hf-fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes hf-card-morph {
+  from {
+    opacity: 0;
+    filter: blur(2px);
+    transform: translate3d(0, 10px, 0) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes hf-trolley-travel {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(135px, 0, 0);
+  }
+}
+
+@keyframes hf-load-hoist {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -68px, 0);
+  }
+}
+
+@keyframes hf-cable-scale {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.45);
+  }
+}
+
+@keyframes hf-bim-scan {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate3d(0, 340px, 0);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.9;
+  }
+}
+
+@keyframes hf-beacon-pulse {
+  0%, 100% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.45);
+  }
+}
+
+@keyframes hf-window-glow {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes hf-crane-slew-3d {
+  0%, 100% {
+    transform: perspective(1100px) rotateY(-16deg) rotateX(3deg);
+  }
+  50% {
+    transform: perspective(1100px) rotateY(16deg) rotateX(-2deg);
+  }
+}
+
+@keyframes hf-shimmer-bar {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes hf-orb-drift {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-45px, 35px, 0) scale(1.18);
+  }
+}
+
+.hf-fade-up {
+  opacity: 0;
+  animation: hf-fade-up 560ms var(--ease-out-expo) forwards;
+}
+
+.hf-card-morph {
+  animation: hf-card-morph 280ms var(--ease-out-expo) forwards;
+}
+
+.hf-crane-slew-3d {
+  transform-box: view-box;
+  transform-origin: 619px 215px;
+  transform-style: preserve-3d;
+  animation: hf-crane-slew-3d 11s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hf-trolley-travel {
+  animation: hf-trolley-travel 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hf-load-hoist {
+  animation: hf-load-hoist 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hf-cable-scale {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: hf-cable-scale 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hf-bim-scan {
+  animation: hf-bim-scan 6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.hf-beacon-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hf-beacon-pulse 1.6s ease-in-out infinite;
+}
+
+.hf-window-glow {
+  animation: hf-window-glow 3.2s ease-in-out infinite;
+}
+
+.hf-shimmer-bar {
+  background-size: 200% 100%;
+  animation: hf-shimmer-bar 3.6s linear infinite;
+}
+
+.hf-orb-drift {
+  animation: hf-orb-drift 10s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hf-press {
+  transition:
+    transform 150ms var(--ease-out-expo),
+    box-shadow 200ms var(--ease-out-expo),
+    background-color 150ms ease;
+}
+
+.hf-press:active {
+  transform: scale(0.98);
 }
 
 .tabular-nums {
